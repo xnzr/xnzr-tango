@@ -1,0 +1,5 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
+    <RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/oldCamLayout">
+        <FrameLayout xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/old_camera_preview" tools:context=".xnzrw24b.OldCameraFragment"/>
+    </RelativeLayout>
+</LinearLayout>
