@@ -20,9 +20,15 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
     private float[] mObjectTransform = null;
     private boolean mObjectPoseUpdated = false;
 
+    private boolean shouldDrawSphere = false;
+
     public void updateObjectPose(float[] planeFitTransform) {
         mObjectTransform = planeFitTransform;
         mObjectPoseUpdated = true;
+    }
+
+    public void setShouldDrawSphere(boolean shouldDrawSphere) {
+        this.shouldDrawSphere = shouldDrawSphere;
     }
 
 
@@ -84,7 +90,10 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         // Enable depth buffer again for AR.
         GLES20.glDepthMask(true);
         GLES20.glCullFace(GLES20.GL_BACK);
-        //mEarthSphere.drawSphere();
+
+        if (shouldDrawSphere) {
+            mEarthSphere.drawSphere();
+        }
 
         mLine.draw();
     }

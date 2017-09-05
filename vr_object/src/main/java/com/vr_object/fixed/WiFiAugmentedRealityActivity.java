@@ -64,6 +64,7 @@ import com.vr_object.fixed.xnzrw24b.LevelCalculator;
 import com.vr_object.fixed.xnzrw24b.MessageFields;
 import com.vr_object.fixed.xnzrw24b.NetworkInfoFragment;
 //import com.vr_object.fixed.xnzrw24b.OldCameraFragment;
+import com.vr_object.fixed.xnzrw24b.SpatialIntersect;
 import com.vr_object.fixed.xnzrw24b.UsbSerialPortTi;
 import com.vr_object.fixed.xnzrw24b.WFPacket;
 import com.vr_object.fixed.xnzrw24b.WFPacketCreator;
@@ -88,6 +89,7 @@ public class WiFiAugmentedRealityActivity extends Activity
     private Tango mTango;
     private TangoConfig mConfig;
     private boolean mIsConnected = false;
+    private SpatialIntersect intersector;
 
     // Texture rendering related fields.
     // NOTE: Naming indicates which thread is in charge of updating this variable
@@ -270,6 +272,8 @@ public class WiFiAugmentedRealityActivity extends Activity
                 }
             }
         });
+
+        intersector = new SpatialIntersect();
     }
 
     @Override
@@ -458,6 +462,7 @@ public class WiFiAugmentedRealityActivity extends Activity
                 // We are not using onPoseAvailable for this app.
             }
 
+
             @Override
             public void onXyzIjAvailable(TangoXyzIjData xyzIj) {
                 // We are not using onXyzIjAvailable for this app.
@@ -499,6 +504,14 @@ public class WiFiAugmentedRealityActivity extends Activity
 
         // Obtain the intrinsic parameters of the color camera.
         mIntrinsics = mTango.getCameraIntrinsics(TangoCameraIntrinsics.TANGO_CAMERA_COLOR);
+
+        intersector.setInitPose(TangoSupport.getPoseAtTime(
+                mRgbTimestampGlThread,
+                TangoPoseData.COORDINATE_FRAME_AREA_DESCRIPTION,
+                TangoPoseData.COORDINATE_FRAME_CAMERA_COLOR,
+                TangoSupport.TANGO_SUPPORT_ENGINE_OPENGL,
+                0));
+
     }
 
     /**
@@ -878,19 +891,19 @@ public class WiFiAugmentedRealityActivity extends Activity
                 planeFitTransform = doFitPlane(u, v, mRgbTimestampGlThread);
 
             } catch (TangoErrorException e) {
-                Toast.makeText(getApplicationContext(),
-                        R.string.exception_tango_error,
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(),
+//                        R.string.exception_tango_error,
+//                        Toast.LENGTH_SHORT).show();
                 Log.e(TAG, getString(R.string.exception_tango_error), e);
             } catch (TangoInvalidException e) {
-                Toast.makeText(getApplicationContext(),
-                        R.string.exception_tango_params,
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(),
+//                        R.string.exception_tango_params,
+//                        Toast.LENGTH_SHORT).show();
                 Log.e(TAG, getString(R.string.exception_tango_params), e);
             } catch (AndroidRuntimeException e) {
-                Toast.makeText(getApplicationContext(),
-                        R.string.exception_unknown,
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(),
+//                        R.string.exception_unknown,
+//                        Toast.LENGTH_SHORT).show();
                 Log.e(TAG, getString(R.string.exception_unknown), e);
             }
         }
@@ -900,7 +913,7 @@ public class WiFiAugmentedRealityActivity extends Activity
             // This update is made thread safe by the renderer
             mRenderer.updateObjectPose(planeFitTransform);
 
-            mRenderer.setEarthTransform(planeFitTransform);
+            //mRenderer.setEarthTransform(planeFitTransform);
         }
 
         try {
@@ -969,6 +982,18 @@ public class WiFiAugmentedRealityActivity extends Activity
                         end[0] += start[0];
                         end[1] += start[1];
                         end[2] += start[2];
+
+                        intersector.addDot(new double[]{end[0], end[1], end[2]});
+                        double[] scoord = intersector.getMaximum();
+                        float[] m = new float[16];
+                        Matrix.setIdentityM(m, 0);
+
+                        m[12] = (float) scoord[0];
+                        m[13] = (float) scoord[1];
+                        m[14] = (float) scoord[2];
+                        mRenderer.setEarthTransform(m);
+
+                        mRenderer.setShouldDrawSphere(intersector.isHasMaximum());
 
                         mRenderer.setLinePos(start, end);
                     }
