@@ -66,9 +66,10 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         mOpenGlCameraPreview.setUpProgramAndBuffers();
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
-        Bitmap earthBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable
-                .earth, options);
-        mEarthSphere.setUpProgramAndBuffers(earthBitmap);
+        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable
+                .red, options);
+
+        mEarthSphere.setUpProgramAndBuffers(bitmap);
 
         mLine.setUpProgramsAndBuffers();
     }
