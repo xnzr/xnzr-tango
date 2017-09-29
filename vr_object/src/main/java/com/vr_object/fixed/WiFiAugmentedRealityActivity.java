@@ -14,10 +14,8 @@ import com.google.atap.tangoservice.TangoPointCloudData;
 import com.google.atap.tangoservice.TangoPoseData;
 import com.google.atap.tangoservice.TangoXyzIjData;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -29,7 +27,6 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
@@ -37,24 +34,21 @@ import android.support.v4.content.ContextCompat;
 import android.util.AndroidRuntimeException;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 //import java.util.jar.Manifest;
-import java.util.logging.Handler;
 
 import com.projecttango.tangosupport.TangoPointCloudManager;
 import com.projecttango.tangosupport.TangoSupport;
-import com.vr_object.fixed.xnzrw24b.CameraFragmentInterface;
 import com.vr_object.fixed.xnzrw24b.ChannelInfoFragment;
 import com.vr_object.fixed.xnzrw24b.DeviceNotFoundException;
 import com.vr_object.fixed.xnzrw24b.DeviceOpenFailedException;
@@ -879,6 +873,8 @@ public class WiFiAugmentedRealityActivity extends Activity
         return true;
     }
 
+
+
     public boolean AddLine(float u, float v) {
         float[] planeFitTransform = null;
 
@@ -913,7 +909,7 @@ public class WiFiAugmentedRealityActivity extends Activity
             // This update is made thread safe by the renderer
             mRenderer.updateObjectPose(planeFitTransform);
 
-            //mRenderer.setEarthTransform(planeFitTransform);
+            //mRenderer.setSphereTransform(planeFitTransform);
         }
 
         try {
@@ -991,7 +987,17 @@ public class WiFiAugmentedRealityActivity extends Activity
                         m[12] = (float) scoord[0];
                         m[13] = (float) scoord[1];
                         m[14] = (float) scoord[2];
-                        mRenderer.setEarthTransform(m);
+
+                        mRenderer.setSphereTransform(m);
+
+                        float[] pelengMatrix = new float[depthTarea.matrix.length];
+                        System.arraycopy(depthTarea.matrix, 0, pelengMatrix, 0, depthTarea.matrix.length);
+//                        Matrix.setIdentityM(pelengMatrix, 0);
+//                        pelengMatrix[12] += start[0];
+//                        pelengMatrix[13] += start[1];
+//                        pelengMatrix[14] += start[2];
+                        mRenderer.setPeleng(pelengMatrix);
+
 
                         mRenderer.setShouldDrawSphere(intersector.isHasMaximum());
 

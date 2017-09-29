@@ -5,12 +5,15 @@ import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.microedition.khronos.opengles.GL10;
 
 /**
  * A sphere that is renderer in AR using OpenGL.
  */
-public class OpenGlSphere {
+public class OpenGlCylinder {
 
     private final String mVss =
             "attribute vec3 a_Position;\n" +
@@ -39,55 +42,65 @@ public class OpenGlSphere {
     private float[] mViewMatrix = new float[16];
     private float[] mProjectionMatrix = new float[16];
 
-    public OpenGlSphere(float radius, int rows, int columns) {
-        float[] vtmp = new float[rows * columns * 3];
+    public OpenGlCylinder(float radius, float height, int n) {
+        float[] vertices = new float[3*2*n];
         // Generate position grid.
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                float theta = i * (float) Math.PI / (rows - 1);
-                float phi = j * 2 * (float) Math.PI / (columns - 1);
-                float x = (float) (radius * Math.sin(theta) * Math.cos(phi));
-                float y = (float) (radius * Math.cos(theta));
-                float z = (float) -(radius * Math.sin(theta) * Math.sin(phi));
-                int index = i * columns + j;
-                vtmp[3 * index] = x;
-                vtmp[3 * index + 1] = y;
-                vtmp[3 * index + 2] = z;
-            }
+        float angle = (float) ((2 * Math.PI) / n);
+        for (int i = 0; i < n; i++) {
+            vertices[3*i] =     (float) (radius * Math.cos(angle*i));
+            vertices[3*i + 1] = (float) (radius * Math.sin(angle*i));
+            vertices[3*i + 2] = 0.01f; //Zero distance to camera means bottom culling. We want to avoid it.
+
+            vertices[3*n + 3*i + 0] = (float) (radius * Math.cos(angle*i));
+            vertices[3*n + 3*i + 1] = (float) (radius * Math.sin(angle*i));
+            vertices[3*n + 3*i + 2] = height;
         }
+
 
         // Create texture grid.
-        float[] ttmp = new float[rows * columns * 2];
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                int index = i * columns + j;
-                ttmp[index * 2] = (float) j / (columns - 1);
-                ttmp[index * 2 + 1] = (float) i / (rows - 1);
-            }
+        float[] textureGrid = new float[2*2*n];
+        for (int i = 0; i < n; i++) {
+            textureGrid[2*i] = (float) 0;
+            textureGrid[2*i + 1] = (float) (1/n);
+
+            textureGrid[2*n + 2*i] = (float) 1;
+            textureGrid[2*n + 2*i + 1] = (float) (1/n);
         }
 
-        // Create indices.
-        int numIndices = 2 * (rows - 1) * columns;
-        short[] itmp = new short[numIndices];
-        short index = 0;
-        for (int i = 0; i < rows - 1; i++) {
-            if ((i & 1) == 0) {
-                for (int j = 0; j < columns; j++) {
-                    itmp[index++] = (short) (i * columns + j);
-                    itmp[index++] = (short) ((i + 1) * columns + j);
-                }
-            } else {
-                for (int j = columns - 1; j >= 0; j--) {
-                    itmp[index++] = (short) ((i + 1) * columns + j);
-                    itmp[index++] = (short) (i * columns + j);
-                }
-            }
+        // Create triangle indices.
+        List<Short> idx = new ArrayList<>();
+        //bottom
+        for (short i = 1; i < n - 1; i++) {
+            idx.add((short) 0);
+            idx.add(i);
+            idx.add((short) (i+1));
         }
 
-        mMesh = new OpenGlMesh(vtmp, 3, ttmp, 2, itmp);
+        //side
+        for (short i = 0; i < n; i++) {
+            idx.add(i);
+            idx.add((short) (n+i));
+            idx.add((short) ((i+1)%n));
+            idx.add((short) (n+i));
+            idx.add((short) (n + (i+1)%n));
+            idx.add((short) ((i+1)%n));
+        }
+
+        //top
+        for (short i = 1; i < n - 1; i++) {
+            idx.add((short) n);
+            idx.add((short) (n+i+1));
+            idx.add((short) (n+i));
+        }
+        short[] triangles = new short[idx.size()];
+        for (int i = 0; i < idx.size(); i++) {
+            triangles[i] = idx.get(i);
+        }
+
+        mMesh = new OpenGlMesh(vertices, 3, textureGrid, 2, triangles);
     }
 
-    public void setUpProgramAndBuffers(Bitmap texture) {
+    public void setUpProgramsAndBuffers(Bitmap texture) {
         mMesh.createVbos();
         createTexture(texture);
         mProgram = OpenGlHelper.createProgram(mVss, mFss);
@@ -106,10 +119,10 @@ public class OpenGlSphere {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER,
                 GLES20.GL_NEAREST);
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, texture, 0);
-        //texture.recycle();
+//        texture.recycle();
     }
 
-    public void drawSphere(GL10 gl) {
+    public void drawCylinder(GL10 gl) {
         GLES20.glUseProgram(mProgram);
         // Enable depth write for AR.
         int sph = GLES20.glGetAttribLocation(mProgram, "a_Position");

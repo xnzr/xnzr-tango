@@ -83,6 +83,9 @@ public class OpenGlMesh {
     }
 
     public void drawMesh(int positionh, int textureh) {
+        GLES20.glEnable(GLES20.GL_BLEND);
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+
         GLES20.glEnableVertexAttribArray(positionh);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVbos[0]);
         GLES20.glVertexAttribPointer(positionh, mVertexCoordNumber, GLES20.GL_FLOAT, false, Float

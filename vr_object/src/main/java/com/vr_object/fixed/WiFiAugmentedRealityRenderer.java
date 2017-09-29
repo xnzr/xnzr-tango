@@ -10,6 +10,11 @@ import android.opengl.Matrix;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
+
 /**
  * An OpenGL renderer that renders the Tango RGB camera texture on a full-screen background
  * and two spheres representing the earth and the moon in Augmented Reality.
@@ -21,6 +26,8 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
     private boolean mObjectPoseUpdated = false;
 
     private boolean shouldDrawSphere = false;
+
+    private List<OpenGlCylinder> cylinderList = new ArrayList<>();
 
     public void updateObjectPose(float[] planeFitTransform) {
         mObjectTransform = planeFitTransform;
@@ -42,15 +49,17 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
 
     private RenderCallback mRenderCallback;
     private OpenGlCameraPreview mOpenGlCameraPreview;
-    private OpenGlSphere mEarthSphere;
+    private OpenGlSphere mSphere;
     private WiFiOpenGLLine mLine;
+    private OpenGlCylinder mTestCylinder;
     private Context mContext;
 
     public WiFiAugmentedRealityRenderer(Context context, RenderCallback callback) {
         mContext = context;
         mRenderCallback = callback;
         mOpenGlCameraPreview = new OpenGlCameraPreview();
-        mEarthSphere = new OpenGlSphere(0.15f, 20, 20);
+        mSphere = new OpenGlSphere(0.15f, 20, 20);
+        mTestCylinder = new OpenGlCylinder(0.001f, 5f, 8);
 
         mLine = new WiFiOpenGLLine();
     }
@@ -61,17 +70,23 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         // Enable face culling to discard back facing triangles.
         GLES20.glEnable(GLES20.GL_CULL_FACE);
+        GLES20.glEnable(GLES20.GL_BLEND);
+        GLES20.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
         GLES20.glCullFace(GLES20.GL_BACK);
-        GLES20.glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+        //GLES20.glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+        GLES20.glClearColor(1.0f, 1.0f, 0.0f, 0.5f);
         mOpenGlCameraPreview.setUpProgramAndBuffers();
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
         Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable
                 .red, options);
+        bitmap.setHasAlpha(true);
 
-        mEarthSphere.setUpProgramAndBuffers(bitmap);
+        mSphere.setUpProgramAndBuffers(bitmap);
+        mTestCylinder.setUpProgramsAndBuffers(bitmap);
 
         mLine.setUpProgramsAndBuffers();
+        GLES20.glDisable(GLES20.GL_BLEND);
     }
 
     @Override
@@ -93,10 +108,14 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         GLES20.glCullFace(GLES20.GL_BACK);
 
         if (shouldDrawSphere) {
-            mEarthSphere.drawSphere();
+            mSphere.drawSphere(gl10);
         }
 
+        mTestCylinder.drawCylinder(gl10);
+
         mLine.draw();
+//        cylinders.draw(gl10);
+//        mCylinder.draw();
     }
 
     /**
@@ -113,8 +132,9 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
      * Augmented Reality.
      */
     public void setProjectionMatrix(float[] matrixFloats) {
-        mEarthSphere.setProjectionMatrix(matrixFloats);
+        mSphere.setProjectionMatrix(matrixFloats);
         mLine.setProjectionMatrix(matrixFloats);
+        mTestCylinder.setProjectionMatrix(matrixFloats);
     }
 
     /**
@@ -125,7 +145,8 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
     public void updateViewMatrix(float[] ssTcamera) {
         float[] viewMatrix = new float[16];
         Matrix.invertM(viewMatrix, 0, ssTcamera, 0);
-        mEarthSphere.setViewMatrix(viewMatrix);
+        mSphere.setViewMatrix(viewMatrix);
+        mTestCylinder.setViewMatrix(viewMatrix);
 
         mLine.setViewMatrix(viewMatrix);
     }
@@ -134,9 +155,12 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         return mLine.getViewMatrix();
     }
 
-    public void setEarthTransform(float[] worldTEarth) {
-        mEarthSphere.setModelMatrix(worldTEarth);
-        //mLine.setModelMatrix(worldTEarth);
+    public void setPeleng(float[] matrix) {
+        mTestCylinder.setModelMatrix(matrix);
+    }
+
+    public void setSphereTransform(float[] worldTEarth) {
+        mSphere.setModelMatrix(worldTEarth);
     }
 
     public void setLineTransform(float[] worldTLine) {
@@ -168,14 +192,10 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         float[] end = new float[4];
         Matrix.multiplyMV(end, 0, matrix, 0, one, 0);
 
-        //mLine.setPosition(zero, one);
         mLine.AddLine(zero, one);
     }
 
     public void setLinePos(float start[], float end[]) {
-        //mLine.setPosition(start, end);
         mLine.AddLine(start, end);
     }
-
-
 }
