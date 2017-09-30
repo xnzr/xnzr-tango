@@ -967,6 +967,8 @@ public class WiFiAugmentedRealityActivity extends Activity
 
                         float[] depthTOpenGl = depthTarea.matrix;
 
+                        mRenderer.addPeleng(depthTOpenGl);
+
                         float[] intersectionPoint = new float[4];
                         intersectionPoint[0] = (float) intersectionPointPlaneModelPair.intersectionPoint[0];
                         intersectionPoint[1] = (float) intersectionPointPlaneModelPair.intersectionPoint[1];
@@ -990,13 +992,6 @@ public class WiFiAugmentedRealityActivity extends Activity
 
                         mRenderer.setSphereTransform(m);
 
-                        float[] pelengMatrix = new float[depthTarea.matrix.length];
-                        System.arraycopy(depthTarea.matrix, 0, pelengMatrix, 0, depthTarea.matrix.length);
-//                        Matrix.setIdentityM(pelengMatrix, 0);
-//                        pelengMatrix[12] += start[0];
-//                        pelengMatrix[13] += start[1];
-//                        pelengMatrix[14] += start[2];
-                        mRenderer.setPeleng(pelengMatrix);
 
 
                         mRenderer.setShouldDrawSphere(intersector.isHasMaximum());

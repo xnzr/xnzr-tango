@@ -73,7 +73,7 @@ public class SpatialIntersect {
             for (int j = 0; j < gizmoSize; j++) {
                 for (int k = 0; k < gizmoSize; k++) {
                     gizmo[i][j][k] = new OpenGlSphere(gizmoRadius, 5, 5);
-                    gizmo[i][j][k].setUpProgramAndBuffers(bmp);
+                    gizmo[i][j][k].setUpProgramsAndBuffers(bmp);
                 }
             }
         }

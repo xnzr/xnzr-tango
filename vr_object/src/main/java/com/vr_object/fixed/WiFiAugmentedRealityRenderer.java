@@ -27,8 +27,6 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
 
     private boolean shouldDrawSphere = false;
 
-    private List<OpenGlCylinder> cylinderList = new ArrayList<>();
-
     public void updateObjectPose(float[] planeFitTransform) {
         mObjectTransform = planeFitTransform;
         mObjectPoseUpdated = true;
@@ -51,7 +49,7 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
     private OpenGlCameraPreview mOpenGlCameraPreview;
     private OpenGlSphere mSphere;
     private WiFiOpenGLLine mLine;
-    private OpenGlCylinder mTestCylinder;
+    private SagittaStorage mSagittae;
     private Context mContext;
 
     public WiFiAugmentedRealityRenderer(Context context, RenderCallback callback) {
@@ -59,7 +57,7 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         mRenderCallback = callback;
         mOpenGlCameraPreview = new OpenGlCameraPreview();
         mSphere = new OpenGlSphere(0.15f, 20, 20);
-        mTestCylinder = new OpenGlCylinder(0.001f, 5f, 8);
+        mSagittae = new SagittaStorage();
 
         mLine = new WiFiOpenGLLine();
     }
@@ -82,8 +80,11 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
                 .red, options);
         bitmap.setHasAlpha(true);
 
-        mSphere.setUpProgramAndBuffers(bitmap);
-        mTestCylinder.setUpProgramsAndBuffers(bitmap);
+        OpenGlCylinder cylinder = new OpenGlCylinder(0.001f, 5f, 8);
+        mSagittae.setObject(cylinder);
+
+        mSphere.setUpProgramsAndBuffers(bitmap);
+        mSagittae.setUpProgramsAndBuffers(bitmap);
 
         mLine.setUpProgramsAndBuffers();
         GLES20.glDisable(GLES20.GL_BLEND);
@@ -108,14 +109,11 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         GLES20.glCullFace(GLES20.GL_BACK);
 
         if (shouldDrawSphere) {
-            mSphere.drawSphere(gl10);
+            mSphere.draw(gl10);
         }
 
-        mTestCylinder.drawCylinder(gl10);
-
-        mLine.draw();
-//        cylinders.draw(gl10);
-//        mCylinder.draw();
+        mSagittae.draw(gl10);
+//        mLine.draw();
     }
 
     /**
@@ -134,7 +132,7 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
     public void setProjectionMatrix(float[] matrixFloats) {
         mSphere.setProjectionMatrix(matrixFloats);
         mLine.setProjectionMatrix(matrixFloats);
-        mTestCylinder.setProjectionMatrix(matrixFloats);
+        mSagittae.setProjectionMatrix(matrixFloats);
     }
 
     /**
@@ -146,53 +144,17 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         float[] viewMatrix = new float[16];
         Matrix.invertM(viewMatrix, 0, ssTcamera, 0);
         mSphere.setViewMatrix(viewMatrix);
-        mTestCylinder.setViewMatrix(viewMatrix);
+        mSagittae.setViewMatrix(viewMatrix);
 
         mLine.setViewMatrix(viewMatrix);
     }
 
-    public float[] getViewMatrix() {
-        return mLine.getViewMatrix();
-    }
-
-    public void setPeleng(float[] matrix) {
-        mTestCylinder.setModelMatrix(matrix);
+    public void addPeleng(float[] matrix) {
+        mSagittae.addModelMatrix(matrix);
     }
 
     public void setSphereTransform(float[] worldTEarth) {
         mSphere.setModelMatrix(worldTEarth);
-    }
-
-    public void setLineTransform(float[] worldTLine) {
-        mLine.setModelMatrix(worldTLine);
-    }
-
-    public void setLine(float[] ssTcamera, float[] worldTEarth)
-    {
-        float[] matrix = new float[16];
-        Matrix.invertM(matrix, 0, ssTcamera, 0);
-
-        float[] zero = new float[4];
-        zero[0] = 0.0f;
-        zero[1] = 0.0f;
-        zero[2] = 0.0f;
-        zero[3] = 0.0f;
-
-        float[] one = new float[4];
-        one[0] = 20.0f;
-        one[1] = 20.0f;
-        one[2] = 20.0f;
-        one[3] = 0.0f;
-
-
-        float[] start = new float[4];
-        Matrix.multiplyMV(start, 0, matrix, 0, zero, 0);
-
-        Matrix.invertM(matrix, 0, worldTEarth, 0);
-        float[] end = new float[4];
-        Matrix.multiplyMV(end, 0, matrix, 0, one, 0);
-
-        mLine.AddLine(zero, one);
     }
 
     public void setLinePos(float start[], float end[]) {

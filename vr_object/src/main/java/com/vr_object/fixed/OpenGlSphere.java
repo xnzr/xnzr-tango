@@ -10,7 +10,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * A sphere that is renderer in AR using OpenGL.
  */
-public class OpenGlSphere {
+public class OpenGlSphere implements OpenGlObject {
 
     private final String mVss =
             "attribute vec3 a_Position;\n" +
@@ -87,13 +87,14 @@ public class OpenGlSphere {
         mMesh = new OpenGlMesh(vtmp, 3, ttmp, 2, itmp);
     }
 
-    public void setUpProgramAndBuffers(Bitmap texture) {
+    @Override
+    public void setUpProgramsAndBuffers(Bitmap texture) {
         mMesh.createVbos();
         createTexture(texture);
         mProgram = OpenGlHelper.createProgram(mVss, mFss);
     }
 
-    public void createTexture(Bitmap texture) {
+    private void createTexture(Bitmap texture) {
         mTextures = new int[1];
         GLES20.glGenTextures(1, mTextures, 0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextures[0]);
@@ -109,7 +110,8 @@ public class OpenGlSphere {
         //texture.recycle();
     }
 
-    public void drawSphere(GL10 gl) {
+    @Override
+    public void draw(GL10 gl) {
         GLES20.glUseProgram(mProgram);
         // Enable depth write for AR.
         int sph = GLES20.glGetAttribLocation(mProgram, "a_Position");
@@ -133,14 +135,17 @@ public class OpenGlSphere {
         mMesh.drawMesh(sph, sth);
     }
 
+    @Override
     public void setModelMatrix(float[] modelMatrix) {
         System.arraycopy(modelMatrix, 0, mModelMatrix, 0, 16);
     }
 
+    @Override
     public void setProjectionMatrix(float[] projectionMatrix) {
         System.arraycopy(projectionMatrix, 0, mProjectionMatrix, 0, 16);
     }
 
+    @Override
     public void setViewMatrix(float[] viewMatrix) {
         System.arraycopy(viewMatrix, 0, mViewMatrix, 0, 16);
     }
