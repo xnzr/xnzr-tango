@@ -29,6 +29,7 @@ public class OpenGlSphere implements OpenGlObject {
                     "varying vec2 v_TexCoord;\n" +
                     "void main() {\n" +
                     "  gl_FragColor = texture2D(u_Texture,v_TexCoord);\n" +
+                    "  gl_FragColor.a = 0.3;\n" +
                     "}";
 
     private OpenGlMesh mMesh;
