@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -15,7 +16,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class SagittaStorage implements OpenGlObject {
     OpenGlObject mSagittaObject;
-    private List<float[]> mModelMatrixList = new ArrayList<>();
+    private CopyOnWriteArrayList<float[]> mModelMatrixList = new CopyOnWriteArrayList<>();
 
     private float[] mProjectionMatrix;
 

@@ -211,7 +211,7 @@ public class WiFiAugmentedRealityActivity extends Activity
 
         // lines
         if (deltaTime > TIME_PERIOD) {
-            if (progress < 3000) {
+            if (progress < 4000) {
                 AddLine(0.5f, 0.5f);
                 //UIAddLine();
                 numUpdates++;
@@ -948,11 +948,11 @@ public class WiFiAugmentedRealityActivity extends Activity
                 if (colorTdepthPose.statusCode == TangoPoseData.POSE_VALID) {
 
                     // Perform plane fitting with the latest available point cloud data.
-                    TangoSupport.IntersectionPointPlaneModelPair intersectionPointPlaneModelPair =
-                            TangoSupport.fitPlaneModelNearPoint(
-                                    pointCloud,
-                                    colorTdepthPose,
-                                    u, v);
+//                    TangoSupport.IntersectionPointPlaneModelPair intersectionPointPlaneModelPair =
+//                            TangoSupport.fitPlaneModelNearPoint(
+//                                    pointCloud,
+//                                    colorTdepthPose,
+//                                    u, v);
 
                     /// from camera_depth to area_description
                     TangoSupport.TangoMatrixTransformData depthTarea =
@@ -969,19 +969,19 @@ public class WiFiAugmentedRealityActivity extends Activity
 
                         mRenderer.addPeleng(depthTOpenGl);
 
-                        float[] intersectionPoint = new float[4];
-                        intersectionPoint[0] = (float) intersectionPointPlaneModelPair.intersectionPoint[0];
-                        intersectionPoint[1] = (float) intersectionPointPlaneModelPair.intersectionPoint[1];
-                        intersectionPoint[2] = (float) intersectionPointPlaneModelPair.intersectionPoint[2];
-                        intersectionPoint[3] = 0.0f;//(float)intersectionPointPlaneModelPair.intersectionPoint[3];
+//                        float[] intersectionPoint = new float[4];
+//                        intersectionPoint[0] = (float) intersectionPointPlaneModelPair.intersectionPoint[0];
+//                        intersectionPoint[1] = (float) intersectionPointPlaneModelPair.intersectionPoint[1];
+//                        intersectionPoint[2] = (float) intersectionPointPlaneModelPair.intersectionPoint[2];
+//                        intersectionPoint[3] = 0.0f;//(float)intersectionPointPlaneModelPair.intersectionPoint[3];
 
-                        Matrix.multiplyMV(end, 0, depthTOpenGl, 0, intersectionPoint, 0);
+//                        Matrix.multiplyMV(end, 0, depthTOpenGl, 0, intersectionPoint, 0);
 
                         end[0] += start[0];
                         end[1] += start[1];
                         end[2] += start[2];
 
-                        intersector.addDot(new double[]{end[0], end[1], end[2]});
+//                        intersector.addDot(new double[]{end[0], end[1], end[2]});
                         double[] scoord = intersector.getMaximum();
                         float[] m = new float[16];
                         Matrix.setIdentityM(m, 0);
