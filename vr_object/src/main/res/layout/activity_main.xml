@@ -43,25 +43,39 @@
         <FrameLayout
             android:id="@+id/networks_list_content_frame"
             android:layout_width="130dp"
-            android:layout_height="match_parent">
-            android:layout_weight="0.1875"
-
+            android:layout_height="match_parent"
+            android:layout_weight="0.1875">
         </FrameLayout>
 
         <FrameLayout
             android:id="@+id/channels_list_content_frame"
             android:layout_width="130dp"
-            android:layout_height="match_parent">
-            android:layout_weight="0.1875" />
-
+            android:layout_height="match_parent"
+            android:layout_weight="0.1875">
         </FrameLayout>
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <SeekBar
+                android:id="@+id/thresholdSetter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="10000"
+                android:progress="3000"/>
+            <TextView
+                android:id="@+id/thresholdView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/textView"
@@ -72,8 +86,7 @@
         <TextView
             android:id="@+id/textView2"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

@@ -38,6 +38,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -114,6 +115,11 @@ public class WiFiAugmentedRealityActivity extends Activity
     private NetworkInfoFragment networksFragment;
     private ChannelInfoFragment mChannelsFragment;
 
+    private SeekBar mThresholdSetter;
+    private TextView mThresholdView;
+
+    private int mThreshold;
+
     private Thread thread;
     private UsbSerialPortTi port = null;
 
@@ -166,6 +172,34 @@ public class WiFiAugmentedRealityActivity extends Activity
         mTextView = (TextView) findViewById(R.id.textView);
         mTextView2 = (TextView) findViewById(R.id.textView2);
 
+        mThresholdSetter = (SeekBar) findViewById(R.id.thresholdSetter);
+        mThresholdView = (TextView) findViewById(R.id.thresholdView);
+
+        mThreshold = mThresholdSetter.getProgress();
+        mThresholdView.setText("threshold: " + mThreshold);
+
+        mThresholdSetter.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                setThreshold(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                setThreshold(seekBar.getProgress());
+            }
+
+            private void setThreshold(int val) {
+                mThreshold = val - val % 100;
+                mThresholdView.setText("threshold: " + mThreshold);
+            }
+        });
+
         /// usb
         networksFragment = NetworkInfoFragment.newInstance(this);
         mChannelsFragment = ChannelInfoFragment.newInstance(this);
@@ -201,6 +235,8 @@ public class WiFiAugmentedRealityActivity extends Activity
         };
     }
 
+
+
     private void UpdateLevel(double level) {
 
         long deltaTime = System.currentTimeMillis() - lastUpdateTime;
@@ -211,7 +247,7 @@ public class WiFiAugmentedRealityActivity extends Activity
 
         // lines
         if (deltaTime > TIME_PERIOD) {
-            if (progress < 4000) {
+            if (progress < mThreshold) {
                 AddLine(0.5f, 0.5f);
                 //UIAddLine();
                 numUpdates++;
