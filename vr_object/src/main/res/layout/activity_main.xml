@@ -90,4 +90,11 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/b_clear_sagittae"
+        android:onClick="clearPelengs"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@drawable/trash_recyclebin_empty_closed"/>
 </FrameLayout>

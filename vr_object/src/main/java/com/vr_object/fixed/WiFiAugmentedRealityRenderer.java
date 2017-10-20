@@ -153,6 +153,10 @@ public class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         mSagittae.addModelMatrix(matrix);
     }
 
+    public void clearPelengs() {
+        mSagittae.clearSagittae();
+    }
+
     public void setSphereTransform(float[] worldTEarth) {
         mSphere.setModelMatrix(worldTEarth);
     }

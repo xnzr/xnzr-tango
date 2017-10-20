@@ -67,6 +67,8 @@ import com.vr_object.fixed.xnzrw24b.WFParseException;
 import com.vr_object.fixed.xnzrw24b.data.ChannelInfo;
 import com.vr_object.fixed.xnzrw24b.data.NetworkInfo;
 
+import static com.vr_object.fixed.R.id.b_clear_sagittae;
+
 public class WiFiAugmentedRealityActivity extends Activity
         implements View.OnClickListener,
         View.OnTouchListener,
@@ -177,6 +179,7 @@ public class WiFiAugmentedRealityActivity extends Activity
 
         mThreshold = mThresholdSetter.getProgress();
         mThresholdView.setText("threshold: " + mThreshold);
+
 
         mThresholdSetter.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -896,6 +899,10 @@ public class WiFiAugmentedRealityActivity extends Activity
         Log.d(TAG, "onClick");
     }
 
+    public void clearPelengs(View view) {
+        mRenderer.clearPelengs();
+    }
+
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
 
@@ -993,7 +1000,7 @@ public class WiFiAugmentedRealityActivity extends Activity
                     /// from camera_depth to area_description
                     TangoSupport.TangoMatrixTransformData depthTarea =
                             TangoSupport.getMatrixTransformAtTime(pointCloud.timestamp,
-                                    TangoPoseData.COORDINATE_FRAME_START_OF_SERVICE,//TangoPoseData.COORDINATE_FRAME_AREA_DESCRIPTION,
+                                    TangoPoseData.COORDINATE_FRAME_START_OF_SERVICE,
                                     TangoPoseData.COORDINATE_FRAME_CAMERA_DEPTH,
                                     TangoSupport.TANGO_SUPPORT_ENGINE_OPENGL,
                                     TangoSupport.TANGO_SUPPORT_ENGINE_TANGO,

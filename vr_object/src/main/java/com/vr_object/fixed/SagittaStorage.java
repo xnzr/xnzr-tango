@@ -24,6 +24,9 @@ public class SagittaStorage implements OpenGlObject {
         mSagittaObject = o;
     }
 
+    public void clearSagittae() {
+        mModelMatrixList.clear();
+    }
 
     @Override
     public void draw(GL10 gl) {
