@@ -10,4 +10,5 @@
     <string name="failed_permissions">Permissions required!</string>
     <string name="exception_tango_params">Tango exception: invalid parameters!</string>
     <string name="exception_unknown">unknown android exception</string>
+    <string name="threshold_text">threshold:</string>
 </resources>

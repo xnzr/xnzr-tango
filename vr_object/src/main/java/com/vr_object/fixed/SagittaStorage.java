@@ -14,17 +14,17 @@ import javax.microedition.khronos.opengles.GL10;
  * Sagitta (lat) - arrow
  */
 
-public class SagittaStorage implements OpenGlObject {
-    OpenGlObject mSagittaObject;
+class SagittaStorage implements OpenGlObject {
+    private OpenGlObject mSagittaObject;
     private CopyOnWriteArrayList<float[]> mModelMatrixList = new CopyOnWriteArrayList<>();
 
     private float[] mProjectionMatrix;
 
-    public void setObject(OpenGlObject o) {
+    void setObject(OpenGlObject o) {
         mSagittaObject = o;
     }
 
-    public void clearSagittae() {
+    void clearSagittae() {
         mModelMatrixList.clear();
     }
 
@@ -41,7 +41,7 @@ public class SagittaStorage implements OpenGlObject {
         mSagittaObject.setUpProgramsAndBuffers(texture);
     }
 
-    public void addModelMatrix(float[] modelMatrix) {
+    void addModelMatrix(float[] modelMatrix) {
         mModelMatrixList.add(modelMatrix);
     }
 

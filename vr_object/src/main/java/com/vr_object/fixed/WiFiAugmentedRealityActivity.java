@@ -29,6 +29,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.AndroidRuntimeException;
@@ -45,6 +46,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 //import java.util.jar.Manifest;
 
@@ -178,7 +180,7 @@ public class WiFiAugmentedRealityActivity extends Activity
         mThresholdView = (TextView) findViewById(R.id.thresholdView);
 
         mThreshold = mThresholdSetter.getProgress();
-        mThresholdView.setText("threshold: " + mThreshold);
+        mThresholdView.setText(getString(R.string.threshold_text) + mThreshold);
 
 
         mThresholdSetter.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -233,8 +235,6 @@ public class WiFiAugmentedRealityActivity extends Activity
                     }
                 }
             }
-
-            ;
         };
     }
 
@@ -252,13 +252,9 @@ public class WiFiAugmentedRealityActivity extends Activity
         if (deltaTime > TIME_PERIOD) {
             if (progress < mThreshold) {
                 AddLine(0.5f, 0.5f);
-                //UIAddLine();
                 numUpdates++;
                 String text2 = String.format("+ %d (%d)\n", progress, numUpdates);
                 mTextView2.append(text2);
-                //mTextView2.setText(text2);
-            } else {
-                ///
             }
             lastUpdateTime = System.currentTimeMillis();
         }
@@ -382,11 +378,8 @@ public class WiFiAugmentedRealityActivity extends Activity
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (hasCameraPermission()) {
-            // init tango
-            //bindTangoService();
-        } else {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (!hasCameraPermission()) {
             Toast.makeText(this, "WiFiAugumentedReality requires camera permission",
                     Toast.LENGTH_LONG).show();
         }
@@ -487,7 +480,7 @@ public class WiFiAugmentedRealityActivity extends Activity
      */
     private void startupTango() {
         // No need to add any coordinate frame pairs since we aren't using pose data from callbacks.
-        ArrayList<TangoCoordinateFramePair> framePairs = new ArrayList<TangoCoordinateFramePair>();
+        ArrayList<TangoCoordinateFramePair> framePairs = new ArrayList<>();
 
         mTango.connectListener(framePairs, new OnTangoUpdateListener() {
             @Override
@@ -691,7 +684,7 @@ public class WiFiAugmentedRealityActivity extends Activity
             // Fit a plane on the clicked point using the latest poiont cloud data
             // Synchronize against concurrent access to the RGB timestamp in the OpenGL thread
             // and a possible service disconnection due to an onPause event.
-            float[] planeFitTransform = null;
+            float[] planeFitTransform;
             synchronized (this) {
                 planeFitTransform = doFitPlane(u, v, mRgbTimestampGlThread);
             }
@@ -1162,7 +1155,7 @@ public class WiFiAugmentedRealityActivity extends Activity
         int read = 0;
         try {
             read = port.read(buf, READ_TIMEOUT_MS);
-            Log.d(TAG, "Read " + buf);
+            Log.d(TAG, "Read " + Arrays.toString(buf));
 
 
             wfCreator.putData(buf, read);
@@ -1232,7 +1225,7 @@ public class WiFiAugmentedRealityActivity extends Activity
             String action = intent.getAction();
 
             if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-                UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                 if (device != null) {
                     Log.d(TAG, "Device was detached");
                     sendInfo("Device was detached");
