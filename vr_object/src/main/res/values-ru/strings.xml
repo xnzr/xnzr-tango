@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_camera">"Требуется разрешение доступа к камере!"</string>
+    <string name="threshold_text">Порог: </string>
+    <string name="show_remove_sagitta_button_text">Показать кнопку удаления стрел</string>
+    <string name="hide_remove_sagitta_button_text">Спрятать кнопку удаления стрел</string>
+    <string name="close_options_text">Закрыть</string>
+</resources>

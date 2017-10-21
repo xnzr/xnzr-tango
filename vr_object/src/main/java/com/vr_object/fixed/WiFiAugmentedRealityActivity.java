@@ -69,7 +69,7 @@ import com.vr_object.fixed.xnzrw24b.WFParseException;
 import com.vr_object.fixed.xnzrw24b.data.ChannelInfo;
 import com.vr_object.fixed.xnzrw24b.data.NetworkInfo;
 
-import static com.vr_object.fixed.R.id.b_clear_sagittae;
+import static com.vr_object.fixed.R.id.*;
 
 public class WiFiAugmentedRealityActivity extends Activity
         implements View.OnClickListener,
@@ -176,8 +176,8 @@ public class WiFiAugmentedRealityActivity extends Activity
         mTextView = (TextView) findViewById(R.id.textView);
         mTextView2 = (TextView) findViewById(R.id.textView2);
 
-        mThresholdSetter = (SeekBar) findViewById(R.id.thresholdSetter);
-        mThresholdView = (TextView) findViewById(R.id.thresholdView);
+        mThresholdSetter = (SeekBar) findViewById(R.id.threshold_setter);
+        mThresholdView = (TextView) findViewById(R.id.threshold_view);
 
         mThreshold = mThresholdSetter.getProgress();
         mThresholdView.setText(getString(R.string.threshold_text) + mThreshold);
@@ -201,7 +201,7 @@ public class WiFiAugmentedRealityActivity extends Activity
 
             private void setThreshold(int val) {
                 mThreshold = val - val % 100;
-                mThresholdView.setText("threshold: " + mThreshold);
+                mThresholdView.setText(getResources().getString(R.string.threshold_text) + mThreshold);
             }
         });
 
@@ -616,16 +616,16 @@ public class WiFiAugmentedRealityActivity extends Activity
                                         double deltaTime = mRgbTimestampGlThread
                                                 - lastRenderedTimeStamp;
                                         lastRenderedTimeStamp = mRgbTimestampGlThread;
-
-                                    } else {
-                                        // When the pose status is not valid, it indicates tracking
-                                        // has been lost. In this case, we simply stop rendering.
-                                        //
-                                        // This is also the place to display UI to suggest the user
-                                        // walk to recover tracking.
-                                        Log.w(TAG, "Could not get a valid transform at time " +
-                                                mRgbTimestampGlThread);
                                     }
+//                                    } else {
+//                                        // When the pose status is not valid, it indicates tracking
+//                                        // has been lost. In this case, we simply stop rendering.
+//                                        //
+//                                        // This is also the place to display UI to suggest the user
+//                                        // walk to recover tracking.
+//                                        Log.w(TAG, "Could not get a valid transform at time " +
+//                                                mRgbTimestampGlThread);
+//                                    }
                                 }
                             }
                             // Avoid crashing the application due to unhandled exceptions
@@ -890,6 +890,15 @@ public class WiFiAugmentedRealityActivity extends Activity
     @Override
     public void onClick(View view) {
         Log.d(TAG, "onClick");
+    }
+
+    public void showOptions(View view) {
+        findViewById(options_scroll_view).setVisibility(View.VISIBLE);
+    }
+
+    public void closeOptions(View view) {
+        View scroll = findViewById(options_scroll_view);
+        scroll.setVisibility(View.GONE);
     }
 
     public void clearPelengs(View view) {

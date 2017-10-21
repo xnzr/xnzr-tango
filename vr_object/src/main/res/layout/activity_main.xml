@@ -63,16 +63,6 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-            <SeekBar
-                android:id="@+id/thresholdSetter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="10000"
-                android:progress="3000"/>
-            <TextView
-                android:id="@+id/thresholdView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
         </LinearLayout>
 
 
@@ -96,4 +86,65 @@
         android:layout_height="50dp"
         android:layout_gravity="bottom|center_horizontal"
         android:background="@drawable/trash_recyclebin_empty_closed"/>
+
+    <Button
+        android:id="@+id/b_options"
+        android:onClick="showOptions"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="top|right"
+        android:background="@drawable/gear"/>
+    <ScrollView
+        android:id="@+id/options_scroll_view"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/threshold_option"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <SeekBar
+                    android:id="@+id/threshold_setter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="10000"
+                    android:progress="3000"/>
+
+                <TextView
+                    android:id="@+id/threshold_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/threshold_text" />
+
+
+            </LinearLayout>
+
+            <ToggleButton
+                android:id="@+id/b_hide_clear_sagittae"
+                android:textOn="@string/hide_remove_sagitta_button_text"
+                android:textOff="@string/show_remove_sagitta_button_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/b_close_options"
+                android:onClick="closeOptions"
+                android:text="@string/close_options_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+        </LinearLayout>
+
+    </ScrollView>
 </FrameLayout>
