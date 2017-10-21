@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
@@ -389,6 +390,8 @@ public class WiFiAugmentedRealityActivity extends Activity
     @Override
     protected void onStart() {
         super.onStart();
+
+        loadOptions();
 
         if (checkAndRequestPermissions()) {
             ; //init tango
@@ -897,12 +900,38 @@ public class WiFiAugmentedRealityActivity extends Activity
     }
 
     public void closeOptions(View view) {
+        closeOptions();
+    }
+
+    private void closeOptions() {
         View scroll = findViewById(options_scroll_view);
         scroll.setVisibility(View.GONE);
+        saveOptions();
     }
 
     public void clearPelengs(View view) {
         mRenderer.clearPelengs();
+    }
+
+    private final String THRESHOLD_KEY = "threshold";
+
+    private void saveOptions() {
+        SharedPreferences sp = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+
+        SeekBar thrSB = (SeekBar) findViewById(threshold_setter);
+        int thr = thrSB.getProgress();
+
+        editor.putInt(THRESHOLD_KEY, thr);
+        editor.commit();
+    }
+
+    private void loadOptions() {
+        SharedPreferences sp = getPreferences(MODE_PRIVATE);
+        int thr = sp.getInt(THRESHOLD_KEY, 3000);
+
+        SeekBar thrSB = (SeekBar) findViewById(threshold_setter);
+        thrSB.setProgress(thr);
     }
 
     @Override

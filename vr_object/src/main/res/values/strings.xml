@@ -14,4 +14,5 @@
     <string name="show_remove_sagitta_button_text">Show remove sagitta button</string>
     <string name="hide_remove_sagitta_button_text">Hide remove sagitta button</string>
     <string name="close_options_text">Close</string>
+    <string name="sagittae_length_text">Sagittae length, m</string>
 </resources>
