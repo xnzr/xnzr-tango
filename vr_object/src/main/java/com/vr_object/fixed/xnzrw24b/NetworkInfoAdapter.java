@@ -47,7 +47,7 @@ public class NetworkInfoAdapter extends RecyclerView.Adapter<NetworkInfoAdapter.
 
         if(mSelectedPosition == position) {
             // Here I am just highlighting the background
-            holder.itemView.setBackgroundColor(Color.GREEN);
+            holder.itemView.setBackgroundColor(Color.argb(80, 0, 200, 0));
         } else {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
         }

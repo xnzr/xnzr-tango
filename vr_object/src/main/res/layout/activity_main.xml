@@ -101,7 +101,7 @@
         android:layout_gravity="center"
         android:visibility="gone"
         android:foregroundGravity="top"
-        android:background="@color/c_options_background"
+        android:background="@color/options_background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 

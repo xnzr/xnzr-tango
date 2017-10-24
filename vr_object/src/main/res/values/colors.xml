@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="c_options_background">#80808080</color>
+    <color name="options_background">#80808080</color>
+    <color name="wifi_selected">#6000A000</color>
 </resources>
