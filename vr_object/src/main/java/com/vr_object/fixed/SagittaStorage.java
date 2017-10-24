@@ -18,10 +18,21 @@ class SagittaStorage implements OpenGlObject {
     private OpenGlObject mSagittaObject;
     private CopyOnWriteArrayList<float[]> mModelMatrixList = new CopyOnWriteArrayList<>();
 
+    private Bitmap mTexture;
     private float[] mProjectionMatrix;
+    private float[] mViewMatrix;
 
     void setObject(OpenGlObject o) {
         mSagittaObject = o;
+        if (mTexture != null) {
+            mSagittaObject.setUpProgramsAndBuffers(mTexture);
+        }
+        if (mProjectionMatrix != null) {
+            mSagittaObject.setProjectionMatrix(mProjectionMatrix);
+        }
+        if (mViewMatrix != null) {
+            mSagittaObject.setViewMatrix(mViewMatrix);
+        }
     }
 
     void clearSagittae() {
@@ -38,6 +49,7 @@ class SagittaStorage implements OpenGlObject {
 
     @Override
     public void setUpProgramsAndBuffers(Bitmap texture) {
+        mTexture = texture;
         mSagittaObject.setUpProgramsAndBuffers(texture);
     }
 
@@ -59,6 +71,7 @@ class SagittaStorage implements OpenGlObject {
 
     @Override
     public void setViewMatrix(float[] viewMatrix) {
+        mViewMatrix = viewMatrix;
         mSagittaObject.setViewMatrix(viewMatrix);
     }
 }

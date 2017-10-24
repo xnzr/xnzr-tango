@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
@@ -41,6 +40,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -122,11 +122,17 @@ public class WiFiAugmentedRealityActivity extends Activity
 
     private SeekBar mThresholdSetter;
     private TextView mThresholdView;
-
     private int mThreshold;
+
+    private SeekBar mSagittaeLenghtSetter;
+    private TextView mSagittaeLengthView;
+
+
+    private final float defaultSagittaeWidth = 0.001f;
 
     private Thread thread;
     private UsbSerialPortTi port = null;
+
 
     private final int INIT_INTERVAL_MS = 3000;
     private final int READ_TIMEOUT_MS = 500;
@@ -145,6 +151,8 @@ public class WiFiAugmentedRealityActivity extends Activity
     private long numUpdates = 0;
     private long lastUpdateTime = 0;
     private final long TIME_PERIOD = 3 * 1000; //ms
+
+    private OptionsHolder optionsHolder = new OptionsHolder(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,8 +188,18 @@ public class WiFiAugmentedRealityActivity extends Activity
         mThresholdSetter = (SeekBar) findViewById(R.id.threshold_setter);
         mThresholdView = (TextView) findViewById(R.id.threshold_view);
 
+        mSagittaeLenghtSetter = (SeekBar) findViewById(R.id.sagittae_length_setter);
+        mSagittaeLengthView = (TextView) findViewById(R.id.sagittae_length_view);
+
+        loadOptions();
+
         mThreshold = mThresholdSetter.getProgress();
-        mThresholdView.setText(getString(R.string.threshold_text) + mThreshold);
+        mThresholdView.setText(String.format("%s %d", getString(R.string.threshold_text), mThreshold));
+
+        int mSagittaeLength = mSagittaeLenghtSetter.getProgress();
+        mSagittaeLengthView.setText(String.format("%s %d", getString(R.string.sagittae_length_text), mSagittaeLength));
+
+
 
 
         mThresholdSetter.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -201,8 +219,27 @@ public class WiFiAugmentedRealityActivity extends Activity
             }
 
             private void setThreshold(int val) {
-                mThreshold = val - val % 100;
-                mThresholdView.setText(getResources().getString(R.string.threshold_text) + mThreshold);
+                mThresholdView.setText(String.format("%s%d", getResources().getString(R.string.threshold_text), val));
+            }
+        });
+
+        mSagittaeLenghtSetter.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                setLength(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                setLength(seekBar.getProgress());
+            }
+
+            private void setLength(int length) {
+                mSagittaeLengthView.setText(String.format("%s%d", getResources().getString(R.string.sagittae_length_text), length));
             }
         });
 
@@ -238,7 +275,6 @@ public class WiFiAugmentedRealityActivity extends Activity
             }
         };
     }
-
 
 
     private void UpdateLevel(double level) {
@@ -390,8 +426,6 @@ public class WiFiAugmentedRealityActivity extends Activity
     @Override
     protected void onStart() {
         super.onStart();
-
-        loadOptions();
 
         if (checkAndRequestPermissions()) {
             ; //init tango
@@ -824,23 +858,6 @@ public class WiFiAugmentedRealityActivity extends Activity
         return m;
     }
 
-//    private float[] matrixFromPointNormalUp(double[] point, double[] normal, float[] up) {
-//        float[] zAxis = new float[]{(float) normal[0], (float) normal[1], (float) normal[2]};
-//        normalize(zAxis);
-//        float[] xAxis = crossProduct(up, zAxis);
-//        normalize(xAxis);
-//        float[] yAxis = crossProduct(zAxis, xAxis);
-//        normalize(yAxis);
-//        float[] m = new float[16];
-//        Matrix.setIdentityM(m, 0);
-////        m[0] = 1f;
-////        m[4] = 1f;
-//        m[12] = (float) point[0];
-//        m[13] = (float) point[1];
-//        m[14] = (float) point[2];
-//        return m;
-//    }
-
     /**
      * Normalize a vector.
      */
@@ -896,9 +913,18 @@ public class WiFiAugmentedRealityActivity extends Activity
     }
 
     public void showOptions(View view) {
+        loadOptions();
         findViewById(options_scroll_view).setVisibility(View.VISIBLE);
     }
 
+    public void closeAndSaveOptions(View view) {
+        closeAndSaveOptions();
+    }
+
+    private void closeAndSaveOptions() {
+        closeOptions();
+        saveOptions();
+    }
     public void closeOptions(View view) {
         closeOptions();
     }
@@ -906,32 +932,60 @@ public class WiFiAugmentedRealityActivity extends Activity
     private void closeOptions() {
         View scroll = findViewById(options_scroll_view);
         scroll.setVisibility(View.GONE);
-        saveOptions();
     }
 
     public void clearPelengs(View view) {
         mRenderer.clearPelengs();
     }
 
-    private final String THRESHOLD_KEY = "threshold";
 
     private void saveOptions() {
-        SharedPreferences sp = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-
         SeekBar thrSB = (SeekBar) findViewById(threshold_setter);
         int thr = thrSB.getProgress();
+        mThreshold = thr - thr % 100;
+        optionsHolder.saveThreshold(mThreshold);
 
-        editor.putInt(THRESHOLD_KEY, thr);
-        editor.commit();
+        SeekBar slSB = (SeekBar) findViewById(sagittae_length_setter);
+        int sl = slSB.getProgress();
+        int prevSl = optionsHolder.loadSagittaLength();
+        if (sl != prevSl) {
+            optionsHolder.saveSagittaLength(sl);
+            Toast.makeText(getApplicationContext(), R.string.sagittae_length_changed, Toast.LENGTH_LONG).show();
+        }
+
+        Switch clearSagittaeSwitch = (Switch) findViewById(b_hide_clear_sagittae);
+        boolean cssChecked = clearSagittaeSwitch.isChecked();
+        optionsHolder.saveShowClearSagittaeButton(cssChecked);
+        setClearSagittaeButtonVisibility(cssChecked);
+    }
+
+    private void setClearSagittaeButtonVisibility(boolean cssChecked) {
+        View clearSagittaeButton = findViewById(b_clear_sagittae);
+        if (cssChecked) {
+            clearSagittaeButton.setVisibility(View.VISIBLE);
+        } else {
+            clearSagittaeButton.setVisibility(View.GONE);
+        }
     }
 
     private void loadOptions() {
-        SharedPreferences sp = getPreferences(MODE_PRIVATE);
-        int thr = sp.getInt(THRESHOLD_KEY, 3000);
+        int thr = optionsHolder.loadThreshold();
 
-        SeekBar thrSB = (SeekBar) findViewById(threshold_setter);
-        thrSB.setProgress(thr);
+        if (mThresholdSetter == null) {
+            mThresholdSetter = (SeekBar) findViewById(threshold_setter);
+        }
+        mThresholdSetter.setProgress(thr);
+
+        int sagittaLength = optionsHolder.loadSagittaLength();
+        if (mSagittaeLenghtSetter == null) {
+            mSagittaeLenghtSetter = (SeekBar) findViewById(sagittae_length_setter);
+        }
+        mSagittaeLenghtSetter.setProgress(sagittaLength);
+
+        boolean cssChecked = optionsHolder.loadShowClearSagittaeButton();
+        setClearSagittaeButtonVisibility(cssChecked);
+        Switch clearSagittaeSwitch = (Switch) findViewById(b_hide_clear_sagittae);
+        clearSagittaeSwitch.setChecked(cssChecked);
     }
 
     @Override
@@ -946,7 +1000,6 @@ public class WiFiAugmentedRealityActivity extends Activity
         }
         return true;
     }
-
 
 
     public boolean AddLine(float u, float v) {
@@ -1065,7 +1118,6 @@ public class WiFiAugmentedRealityActivity extends Activity
                         m[14] = (float) scoord[2];
 
                         mRenderer.setSphereTransform(m);
-
 
 
                         mRenderer.setShouldDrawSphere(intersector.isHasMaximum());

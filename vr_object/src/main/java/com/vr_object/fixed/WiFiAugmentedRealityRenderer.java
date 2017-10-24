@@ -51,6 +51,7 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
     private WiFiOpenGLLine mLine;
     private SagittaStorage mSagittae;
     private Context mContext;
+    private OptionsHolder optionsHolder;
 
     WiFiAugmentedRealityRenderer(Context context, RenderCallback callback) {
         mContext = context;
@@ -58,6 +59,7 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         mOpenGlCameraPreview = new OpenGlCameraPreview();
         mSphere = new OpenGlSphere(0.15f, 20, 20);
         mSagittae = new SagittaStorage();
+        optionsHolder = new OptionsHolder(mContext);
 
         mLine = new WiFiOpenGLLine();
     }
@@ -80,8 +82,8 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
                 .red, options);
         bitmap.setHasAlpha(true);
 
-        OpenGlCylinder cylinder = new OpenGlCylinder(0.001f, 5f, 8);
-        mSagittae.setObject(cylinder);
+        int sagittaLength = optionsHolder.loadSagittaLength();
+        changeSagitta(0.001f, sagittaLength);
 
         mSphere.setUpProgramsAndBuffers(bitmap);
         mSagittae.setUpProgramsAndBuffers(bitmap);
@@ -123,6 +125,11 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
      */
     int getTextureId() {
         return mOpenGlCameraPreview == null ? -1 : mOpenGlCameraPreview.getTextureId();
+    }
+
+    public void changeSagitta(float width, float length) {
+        OpenGlCylinder cylinder = new OpenGlCylinder(width, length, 8);
+        mSagittae.setObject(cylinder);
     }
 
     /**

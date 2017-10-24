@@ -33,6 +33,137 @@
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />
 
+    <ImageButton
+        android:id="@+id/b_clear_sagittae"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:onClick="clearPelengs"
+        android:scaleType="fitEnd"
+        android:src="@drawable/trash_recyclebin_empty_closed"/>
+
+    <Button
+        android:id="@+id/b_options"
+        android:onClick="showOptions"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="top|end"
+        android:background="@drawable/gear"/>
+    <ScrollView
+        android:id="@+id/options_scroll_view"
+        android:layout_gravity="center"
+        android:visibility="visible"
+        android:background="@color/c_options_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/threshold_option"
+                android:layout_margin="@dimen/options_group_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/OptionsText"
+                    android:text="@string/change_threshold_caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <SeekBar
+                    android:id="@+id/threshold_setter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="10000"
+                    android:progress="3000"/>
+
+                <TextView
+                    style="@style/OptionsText"
+                    android:id="@+id/threshold_view"
+                    android:paddingTop="@dimen/options_label_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/threshold_text" />
+
+
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/b_hide_clear_sagittae"
+                style="@style/OptionsText"
+                android:checked="true"
+                android:text="@string/sagitta_button_switch"
+                android:textOn="@string/remove_sagitta_button_text_on"
+                android:textOff="@string/remove_sagitta_button_text_off"
+                android:layout_margin="@dimen/options_group_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_margin="@dimen/options_group_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/OptionsText"
+                    android:id="@+id/sagittae_length_setter_caption"
+                    android:text="@string/change_sagittae_length_caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <SeekBar
+                    android:id="@+id/sagittae_length_setter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="50"
+                    android:progress="5"/>
+                <TextView
+                    style="@style/OptionsText"
+                    android:id="@+id/sagittae_length_view"
+                    android:text="@string/sagittae_length_text"
+                    android:paddingTop="@dimen/options_label_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_margin="@dimen/options_group_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/b_save_options"
+                    android:onClick="closeAndSaveOptions"
+                    android:layout_weight="0.3"
+                    android:text="@string/save_options_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:onClick="closeOptions"
+                    android:text="@string/close_options_text"
+                    android:layout_weight="0.3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -43,26 +174,25 @@
             android:id="@+id/networks_list_content_frame"
             android:layout_width="130dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.1875">
-        </FrameLayout>
+            android:layout_weight="0.1875"></FrameLayout>
 
         <FrameLayout
             android:id="@+id/channels_list_content_frame"
             android:layout_width="130dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.1875">
-        </FrameLayout>
+            android:layout_weight="0.1875"></FrameLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
+
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
 
@@ -75,94 +205,7 @@
         <TextView
             android:id="@+id/textView2"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/b_clear_sagittae"
-        android:onClick="clearPelengs"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:background="@drawable/trash_recyclebin_empty_closed"/>
-
-    <Button
-        android:id="@+id/b_options"
-        android:onClick="showOptions"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="top|right"
-        android:background="@drawable/gear"/>
-    <ScrollView
-        android:id="@+id/options_scroll_view"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:id="@+id/threshold_option"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <SeekBar
-                    android:id="@+id/threshold_setter"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:max="10000"
-                    android:progress="3000"/>
-
-                <TextView
-                    android:id="@+id/threshold_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/threshold_text" />
-
-
-            </LinearLayout>
-
-            <ToggleButton
-                android:id="@+id/b_hide_clear_sagittae"
-                android:textOn="@string/hide_remove_sagitta_button_text"
-                android:textOff="@string/show_remove_sagitta_button_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <SeekBar
-                    android:id="@+id/sagittae_length_setter"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:max="50"
-                    android:progress="5"/>
-                <TextView
-                    android:text="@string/sagittae_length_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/b_close_options"
-                android:onClick="closeOptions"
-                android:text="@string/close_options_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-
-        </LinearLayout>
-
-    </ScrollView>
 </FrameLayout>
