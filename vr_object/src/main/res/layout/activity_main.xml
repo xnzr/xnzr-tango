@@ -49,10 +49,58 @@
         android:layout_height="50dp"
         android:layout_gravity="top|end"
         android:background="@drawable/gear"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <FrameLayout
+            android:id="@+id/networks_list_content_frame"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1875"></FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/channels_list_content_frame"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1875"></FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
     <ScrollView
         android:id="@+id/options_scroll_view"
         android:layout_gravity="center"
-        android:visibility="visible"
+        android:visibility="gone"
+        android:foregroundGravity="top"
         android:background="@color/c_options_background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
@@ -164,48 +212,4 @@
 
     </ScrollView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="1">
-
-        <FrameLayout
-            android:id="@+id/networks_list_content_frame"
-            android:layout_width="130dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.1875"></FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/channels_list_content_frame"
-            android:layout_width="130dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.1875"></FrameLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
 </FrameLayout>
