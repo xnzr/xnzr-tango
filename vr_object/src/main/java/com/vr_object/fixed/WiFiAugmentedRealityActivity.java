@@ -38,6 +38,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -52,6 +54,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.projecttango.tangosupport.TangoPointCloudManager;
 import com.projecttango.tangosupport.TangoSupport;
+import com.vr_object.fixed.xnzrw24b.AimView;
 import com.vr_object.fixed.xnzrw24b.ChannelInfoFragment;
 import com.vr_object.fixed.xnzrw24b.DeviceNotFoundException;
 import com.vr_object.fixed.xnzrw24b.DeviceOpenFailedException;
@@ -124,6 +127,9 @@ public class WiFiAugmentedRealityActivity extends Activity
     private SeekBar mSagittaeLenghtSetter;
     private TextView mSagittaeLengthView;
 
+    private AimView mAimView;
+    FrameLayout mCircleFrameLayout;
+
 
     private final float defaultSagittaeWidth = 0.001f;
 
@@ -189,6 +195,13 @@ public class WiFiAugmentedRealityActivity extends Activity
         mSagittaeLengthView = (TextView) findViewById(R.id.sagittae_length_view);
 
         loadOptions();
+
+        mAimView = new AimView(this);
+        mAimView.setLayoutParams(new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT));
+        mCircleFrameLayout = (FrameLayout) findViewById(circle_container);
+        mCircleFrameLayout.addView(mAimView);
 
         mThreshold = mThresholdSetter.getProgress();
         mThresholdView.setText(String.format("%s %d", getString(R.string.threshold_text), mThreshold));
@@ -293,9 +306,23 @@ public class WiFiAugmentedRealityActivity extends Activity
             lastUpdateTime = System.currentTimeMillis();
         }
 
+        setLevel(level);
+
         //update progress bar
         int tmp = Math.abs(mProgressBar.getMax() - Math.min(progress, mProgressBar.getMax()));
         mProgressBar.setProgress(tmp);
+    }
+
+    public void setLevel(double level) {
+        mAimView.setSizes(mCircleFrameLayout.getMeasuredWidth(), mCircleFrameLayout.getMeasuredHeight());
+        mAimView.setLevel(level);
+        mAimView.invalidate();
+
+    }
+
+    public void clearRadius() {
+        mAimView.setRadius(0);
+        mAimView.invalidate();
     }
 
     @Override
