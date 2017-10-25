@@ -49,7 +49,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
-//import java.util.jar.Manifest;
 
 import com.projecttango.tangosupport.TangoPointCloudManager;
 import com.projecttango.tangosupport.TangoSupport;
@@ -58,10 +57,8 @@ import com.vr_object.fixed.xnzrw24b.DeviceNotFoundException;
 import com.vr_object.fixed.xnzrw24b.DeviceOpenFailedException;
 import com.vr_object.fixed.xnzrw24b.ItsPacketCreator;
 import com.vr_object.fixed.xnzrw24b.LevelCalculator;
-//import com.vr_object.fixed.xnzrw24b.MainActivity;
 import com.vr_object.fixed.xnzrw24b.MessageFields;
 import com.vr_object.fixed.xnzrw24b.NetworkInfoFragment;
-//import com.vr_object.fixed.xnzrw24b.OldCameraFragment;
 import com.vr_object.fixed.xnzrw24b.SpatialIntersect;
 import com.vr_object.fixed.xnzrw24b.UsbSerialPortTi;
 import com.vr_object.fixed.xnzrw24b.WFPacket;
