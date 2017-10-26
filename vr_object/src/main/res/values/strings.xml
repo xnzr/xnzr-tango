@@ -12,11 +12,12 @@
     <string name="exception_unknown">unknown android exception</string>
     <string name="change_threshold_caption">Change threshold for sagittae creation</string>
     <string name="threshold_text">threshold:</string>
-    <string name="remove_sagitta_button_text_off">Show remove sagitta button</string>
-    <string name="remove_sagitta_button_text_on">Hide remove sagitta button</string>
+    <string name="sagitta_button_switch">Sagitta remove button</string>
+    <string name="remove_sagitta_button_text_off">Hidden</string>
+    <string name="remove_sagitta_button_text_on">Shown</string>
     <string name="save_options_text">Save</string>
     <string name="close_options_text">Close</string>
     <string name="sagittae_length_text">Sagittae length, m</string>
-    <string name="change_sagittae_length_caption">Change sagittae length\nChanges will be applied in next start</string>
-    <string name="sagittae_length_changed">Sagittae length changed. Change will be applied in next start</string>
+    <string name="change_sagittae_length_caption">Change sagittae length</string>
+    <string name="sagittae_length_changed">Sagittae length changed.</string>
 </resources>

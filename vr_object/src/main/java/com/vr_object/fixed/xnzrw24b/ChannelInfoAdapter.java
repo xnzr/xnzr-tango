@@ -54,7 +54,8 @@ public class ChannelInfoAdapter extends RecyclerView.Adapter<ChannelInfoAdapter.
             // Here I am just highlighting the background
             holder.itemView.setBackgroundColor(Color.argb(80, 0, 200, 0));
         } else {
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+//            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+            holder.itemView.setBackgroundColor(Color.argb(70, 200, 200, 200));
         }
     }
 

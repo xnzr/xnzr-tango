@@ -49,7 +49,8 @@ public class NetworkInfoAdapter extends RecyclerView.Adapter<NetworkInfoAdapter.
             // Here I am just highlighting the background
             holder.itemView.setBackgroundColor(Color.GREEN);
         } else {
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+            holder.itemView.setBackgroundColor(Color.argb(70, 200, 200, 200));
+//            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
         }
     }
 

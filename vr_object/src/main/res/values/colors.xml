@@ -2,4 +2,5 @@
 <resources>
     <color name="options_background">#80808080</color>
     <color name="wifi_selected">#6000A000</color>
+    <color name="wifi_info">#202020</color>
 </resources>

@@ -81,7 +81,7 @@ public class WiFiAugmentedRealityActivity extends Activity
     private static final int INVALID_TEXTURE_ID = 0;
 
     private TextView mTextView;
-    private TextView mTextView2;
+    //private TextView mTextView2;
     private ProgressBar mProgressBar;
     private GLSurfaceView mSurfaceView;
     private WiFiAugmentedRealityRenderer mRenderer;
@@ -186,7 +186,7 @@ public class WiFiAugmentedRealityActivity extends Activity
         lastUpdateTime = System.currentTimeMillis();
 
         mTextView = (TextView) findViewById(R.id.textView);
-        mTextView2 = (TextView) findViewById(R.id.textView2);
+        //mTextView2 = (TextView) findViewById(R.id.textView2);
 
         mThresholdSetter = (SeekBar) findViewById(R.id.threshold_setter);
         mThresholdView = (TextView) findViewById(R.id.threshold_view);
@@ -300,8 +300,8 @@ public class WiFiAugmentedRealityActivity extends Activity
             if (progress < mThreshold) {
                 AddLine(0.5f, 0.5f);
                 numUpdates++;
-                String text2 = String.format("+ %d (%d)\n", progress, numUpdates);
-                mTextView2.append(text2);
+//                String text2 = String.format("+ %d (%d)\n", progress, numUpdates);
+//                mTextView2.append(text2);
             }
             lastUpdateTime = System.currentTimeMillis();
         }

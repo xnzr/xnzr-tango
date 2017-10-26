@@ -49,7 +49,8 @@ public class NetworkInfoAdapter extends RecyclerView.Adapter<NetworkInfoAdapter.
             // Here I am just highlighting the background
             holder.itemView.setBackgroundColor(Color.argb(80, 0, 200, 0));
         } else {
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+//            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+            holder.itemView.setBackgroundColor(Color.argb(70, 200, 200, 200));
         }
     }
 
@@ -69,7 +70,7 @@ public class NetworkInfoAdapter extends RecyclerView.Adapter<NetworkInfoAdapter.
             mView = view;
             mSsidView = (TextView) view.findViewById(R.id.row_ssid);
             mMacView = (TextView) view.findViewById(R.id.row_mac);
-            mMacView.setTextColor(mMacView.getTextColors().withAlpha(100));
+            //mMacView.setTextColor(mMacView.getTextColors().withAlpha(100));
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override

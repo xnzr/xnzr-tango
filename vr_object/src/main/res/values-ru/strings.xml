@@ -9,6 +9,6 @@
     <string name="save_options_text">Сохранить</string>
     <string name="close_options_text">Закрыть</string>
     <string name="sagittae_length_text">"Длина стрел, м: "</string>
-    <string name="change_sagittae_length_caption">Изменить длину стрел.\nИзменения вступят в силу после перезапуска.</string>
-    <string name="sagittae_length_changed">Длина стрел изменена. Изменения вступят в силу при следующей загрузке приложения.</string>
+    <string name="change_sagittae_length_caption">Изменить длину стрел</string>
+    <string name="sagittae_length_changed">Длина стрел изменена.</string>
 </resources>

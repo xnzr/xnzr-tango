@@ -12,6 +12,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
+        android:textColor="@color/wifi_info"
         android:textSize="7pt"
         android:textStyle="bold"
         />
@@ -21,6 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
+        android:textColor="@color/wifi_info"
         android:layout_below="@id/row_channel"
         android:textSize="6pt"
         />
@@ -30,6 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
+        android:textColor="@color/wifi_info"
         android:layout_below="@id/row_rssi1"
         android:textSize="6pt"
         />

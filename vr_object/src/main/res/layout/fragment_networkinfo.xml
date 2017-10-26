@@ -13,6 +13,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
+        android:textColor="@color/wifi_info"
         android:textSize="9pt"
         />
     <TextView
@@ -22,6 +23,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@id/row_ssid"
+        android:textColor="@color/wifi_info"
         android:textSize="6pt"
         />
 
