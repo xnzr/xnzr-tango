@@ -974,6 +974,7 @@ public class WiFiAugmentedRealityActivity extends Activity
         int prevSl = optionsHolder.loadSagittaLength();
         if (sl != prevSl) {
             optionsHolder.saveSagittaLength(sl);
+            mRenderer.setSagittaLenght(sl);
             Toast.makeText(getApplicationContext(), R.string.sagittae_length_changed, Toast.LENGTH_LONG).show();
         }
 

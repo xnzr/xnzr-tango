@@ -11,10 +11,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 /**
  * An OpenGL renderer that renders the Tango RGB camera texture on a full-screen background
  * and two spheres representing the earth and the moon in Augmented Reality.
@@ -83,7 +79,7 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         bitmap.setHasAlpha(true);
 
         int sagittaLength = optionsHolder.loadSagittaLength();
-        changeSagitta(0.001f, sagittaLength);
+        initSagitta(0.001f, sagittaLength);
 
         mSphere.setUpProgramsAndBuffers(bitmap);
         mSagittae.setUpProgramsAndBuffers(bitmap);
@@ -127,9 +123,13 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         return mOpenGlCameraPreview == null ? -1 : mOpenGlCameraPreview.getTextureId();
     }
 
-    public void changeSagitta(float width, float length) {
+    private void initSagitta(float width, float length) {
         OpenGlCylinder cylinder = new OpenGlCylinder(width, length, 8);
         mSagittae.setObject(cylinder);
+    }
+
+    public void setSagittaLenght(float length) {
+        mSagittae.setSagittaLength(length);
     }
 
     /**

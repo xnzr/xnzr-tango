@@ -5,6 +5,8 @@ import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
 
+import com.vr_object.fixed.xnzrw24b.OpenGlSagitta;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * A sphere that is renderer in AR using OpenGL.
  */
-public class OpenGlCylinder implements OpenGlObject {
+public class OpenGlCylinder implements OpenGlSagitta {
 
     private final String mVss =
             "attribute vec3 a_Position;\n" +
@@ -37,23 +39,26 @@ public class OpenGlCylinder implements OpenGlObject {
     private OpenGlMesh mMesh;
     private int[] mTextures;
     private int mProgram;
+    private float mHeight;
 
     private float[] mModelMatrix = new float[16];
     private float[] mViewMatrix = new float[16];
     private float[] mProjectionMatrix = new float[16];
+    private float[] mScaleMatrix = new float[16];
 
-    public OpenGlCylinder(float radius, float height, int n) {
+    OpenGlCylinder(float radius, float height, int n) {
+        mHeight = height;
         float[] vertices = new float[3*2*n];
         // Generate position grid.
         float angle = (float) ((2 * Math.PI) / n);
         for (int i = 0; i < n; i++) {
-            vertices[3*i] =     (float) (radius * Math.cos(angle*i));
+            vertices[3*i]     = (float) (radius * Math.cos(angle*i));
             vertices[3*i + 1] = (float) (radius * Math.sin(angle*i));
             vertices[3*i + 2] = 0.01f; //Zero distance to camera means bottom culling. We want to avoid it.
 
-            vertices[3*n + 3*i + 0] = (float) (radius * Math.cos(angle*i));
+            vertices[3*n + 3*i]     = (float) (radius * Math.cos(angle*i));
             vertices[3*n + 3*i + 1] = (float) (radius * Math.sin(angle*i));
-            vertices[3*n + 3*i + 2] = height;
+            vertices[3*n + 3*i + 2] = 1;
         }
 
 
@@ -98,6 +103,18 @@ public class OpenGlCylinder implements OpenGlObject {
         }
 
         mMesh = new OpenGlMesh(vertices, 3, textureGrid, 2, triangles);
+        setUpScaleMatrix();
+    }
+
+    @Override
+    public void setLength(float length) {
+        mHeight = length;
+        setUpScaleMatrix();
+    }
+
+    private void setUpScaleMatrix() {
+        Matrix.setIdentityM(mScaleMatrix, 0);
+        mScaleMatrix[10] = mHeight;
     }
 
     @Override
@@ -135,8 +152,11 @@ public class OpenGlCylinder implements OpenGlObject {
 
         gl.glColor4f(0, 1, 0, 0.3f);
 
+        float[] mmMatrix = new float[16];
+        Matrix.multiplyMM(mmMatrix, 0, mModelMatrix, 0, mScaleMatrix, 0);
+
         float[] mvMatrix = new float[16];
-        Matrix.multiplyMM(mvMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
+        Matrix.multiplyMM(mvMatrix, 0, mViewMatrix, 0, mmMatrix, 0);
         float[] mvpMatrix = new float[16];
         Matrix.multiplyMM(mvpMatrix, 0, mProjectionMatrix, 0, mvMatrix, 0);
 
@@ -146,6 +166,19 @@ public class OpenGlCylinder implements OpenGlObject {
         GLES20.glUniformMatrix4fv(um, 1, false, mvpMatrix, 0);
 
         mMesh.drawMesh(sph, sth);
+    }
+
+    private float calcDistance(float [] mvpMatrix) {
+        float[] startVec = new float[4];
+        startVec[3] = 1;
+        Matrix.multiplyMV(startVec, 0, mvpMatrix, 0, startVec, 0);
+
+        float[] endVec = new float[4];
+        endVec[2] = mHeight;
+        endVec[3] = 1;
+        Matrix.multiplyMV(endVec, 0, mvpMatrix, 0, endVec, 0);
+
+        return 0;
     }
 
     @Override

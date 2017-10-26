@@ -9,14 +9,13 @@ import javax.microedition.khronos.opengles.GL10;
  */
 
 public interface OpenGlObject {
-    public void draw(GL10 gl);
+    void draw(GL10 gl);
 
-    public void setUpProgramsAndBuffers(Bitmap texture);
+    void setUpProgramsAndBuffers(Bitmap texture);
 
+    void setModelMatrix(float[] modelMatrix);
 
-    public void setModelMatrix(float[] modelMatrix);
+    void setProjectionMatrix(float[] projectionMatrix);
 
-    public void setProjectionMatrix(float[] projectionMatrix);
-
-    public void setViewMatrix(float[] viewMatrix);
+    void setViewMatrix(float[] viewMatrix);
 }

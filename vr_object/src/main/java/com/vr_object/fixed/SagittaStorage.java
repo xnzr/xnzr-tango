@@ -2,6 +2,8 @@ package com.vr_object.fixed;
 
 import android.graphics.Bitmap;
 
+import com.vr_object.fixed.xnzrw24b.OpenGlSagitta;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -15,14 +17,20 @@ import javax.microedition.khronos.opengles.GL10;
  */
 
 class SagittaStorage implements OpenGlObject {
-    private OpenGlObject mSagittaObject;
+    private OpenGlSagitta mSagittaObject;
     private CopyOnWriteArrayList<float[]> mModelMatrixList = new CopyOnWriteArrayList<>();
 
     private Bitmap mTexture;
     private float[] mProjectionMatrix;
     private float[] mViewMatrix;
 
-    void setObject(OpenGlObject o) {
+    void setSagittaLength(float length) {
+        if (mSagittaObject != null) {
+            mSagittaObject.setLength(length);
+        }
+    }
+
+    void setObject(OpenGlSagitta o) {
         mSagittaObject = o;
         if (mTexture != null) {
             mSagittaObject.setUpProgramsAndBuffers(mTexture);
