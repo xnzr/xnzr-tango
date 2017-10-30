@@ -149,7 +149,6 @@
                     android:layout_gravity="center_vertical"
                     android:text="@string/threshold_text" />
 
-
             </LinearLayout>
 
             <Switch
@@ -159,6 +158,26 @@
                 android:text="@string/sagitta_button_switch"
                 android:textOn="@string/remove_sagitta_button_text_on"
                 android:textOff="@string/remove_sagitta_button_text_off"
+                android:layout_margin="@dimen/options_group_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Switch
+                android:id="@+id/b_on_off_circle"
+                style="@style/OptionsText"
+                android:text="@string/circle_switch"
+                android:textOn="@string/text_on_male"
+                android:textOff="@string/text_off_male"
+                android:layout_margin="@dimen/options_group_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Switch
+                android:id="@+id/b_on_off_sound"
+                style="@style/OptionsText"
+                android:text="@string/sound_switch"
+                android:textOn="@string/text_on_male"
+                android:textOff="@string/text_off_male"
                 android:layout_margin="@dimen/options_group_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -192,6 +211,8 @@
 
             </LinearLayout>
 
+
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_margin="@dimen/options_group_margin"
@@ -215,6 +236,7 @@
 
 
             </LinearLayout>
+
 
 
 

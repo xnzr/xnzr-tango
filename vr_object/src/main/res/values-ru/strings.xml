@@ -11,4 +11,8 @@
     <string name="sagittae_length_text">"Длина стрел, м: "</string>
     <string name="change_sagittae_length_caption">Изменить длину стрел</string>
     <string name="sagittae_length_changed">Длина стрел изменена.</string>
+    <string name="circle_switch">Круг</string>
+    <string name="sound_switch">Звук</string>
+    <string name="text_on_male">Включен</string>
+    <string name="text_off_male">Выключен</string>
 </resources>

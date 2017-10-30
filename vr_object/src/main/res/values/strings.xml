@@ -20,4 +20,8 @@
     <string name="sagittae_length_text">Sagittae length, m</string>
     <string name="change_sagittae_length_caption">Change sagittae length</string>
     <string name="sagittae_length_changed">Sagittae length changed.</string>
+    <string name="circle_switch">Circle</string>
+    <string name="sound_switch">Sound</string>
+    <string name="text_on_male">On</string>
+    <string name="text_off_male">Off</string>
 </resources>

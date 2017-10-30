@@ -91,6 +91,8 @@ public class WiFiAugmentedRealityActivity extends Activity
     private boolean mIsConnected = false;
     private SpatialIntersect intersector;
 
+    private boolean debugSagitta = false;
+
     // Texture rendering related fields.
     // NOTE: Naming indicates which thread is in charge of updating this variable
     private int mConnectedTextureIdGlThread = INVALID_TEXTURE_ID;
@@ -194,7 +196,6 @@ public class WiFiAugmentedRealityActivity extends Activity
         mSagittaeLenghtSetter = (SeekBar) findViewById(R.id.sagittae_length_setter);
         mSagittaeLengthView = (TextView) findViewById(R.id.sagittae_length_view);
 
-        loadOptions();
 
         mAimView = new AimView(this);
         mAimView.setLayoutParams(new FrameLayout.LayoutParams(
@@ -202,6 +203,8 @@ public class WiFiAugmentedRealityActivity extends Activity
                 FrameLayout.LayoutParams.MATCH_PARENT));
         mCircleFrameLayout = (FrameLayout) findViewById(circle_container);
         mCircleFrameLayout.addView(mAimView);
+
+        loadOptions();
 
         mThreshold = mThresholdSetter.getProgress();
         mThresholdView.setText(String.format("%s %d", getString(R.string.threshold_text), mThreshold));
@@ -982,6 +985,16 @@ public class WiFiAugmentedRealityActivity extends Activity
         boolean cssChecked = clearSagittaeSwitch.isChecked();
         optionsHolder.saveShowClearSagittaeButton(cssChecked);
         setClearSagittaeButtonVisibility(cssChecked);
+
+        Switch circle = (Switch) findViewById(b_on_off_circle);
+        boolean circleOn = circle.isChecked();
+        optionsHolder.saveCircleVisibility(circleOn);
+        setCircleVisibility(circleOn);
+
+        Switch sound = (Switch) findViewById(b_on_off_sound);
+        boolean soundState = sound.isChecked();
+        optionsHolder.saveSoundState(soundState);
+        setSoundState(soundState);
     }
 
     private void setClearSagittaeButtonVisibility(boolean cssChecked) {
@@ -991,6 +1004,18 @@ public class WiFiAugmentedRealityActivity extends Activity
         } else {
             clearSagittaeButton.setVisibility(View.GONE);
         }
+    }
+
+    private void setCircleVisibility(boolean value) {
+        if (value) {
+            mAimView.setVisibility(View.VISIBLE);
+        } else {
+            mAimView.setVisibility(View.GONE);
+        }
+    }
+
+    private void setSoundState(boolean state) {
+        mAimView.setSound(state);
     }
 
     private void loadOptions() {
@@ -1011,12 +1036,21 @@ public class WiFiAugmentedRealityActivity extends Activity
         setClearSagittaeButtonVisibility(cssChecked);
         Switch clearSagittaeSwitch = (Switch) findViewById(b_hide_clear_sagittae);
         clearSagittaeSwitch.setChecked(cssChecked);
+
+        boolean circleOn = optionsHolder.loadCircleVisibility();
+        setCircleVisibility(circleOn);
+        Switch circle = (Switch) findViewById(b_on_off_circle);
+        circle.setChecked(circleOn);
+
+        boolean soundOn = optionsHolder.loadSoundState();
+        setSoundState(soundOn);
+        Switch sound = (Switch) findViewById(b_on_off_sound);
+        sound.setChecked(soundOn);
     }
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-
-        if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+        if (motionEvent.getAction() == MotionEvent.ACTION_UP && debugSagitta) {
             // Calculate click location in u,v (0;1) coordinates.
             float u = motionEvent.getX() / view.getWidth();
             float v = motionEvent.getY() / view.getHeight();

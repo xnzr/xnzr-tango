@@ -2,6 +2,7 @@ package com.vr_object.fixed;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ProviderInfo;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -12,12 +13,17 @@ import static android.content.Context.MODE_PRIVATE;
 public class OptionsHolder {
     private final String THRESHOLD_KEY = "threshold";
     private final String SAGITTAE_LENGTH_KEY = "sagittae_length";
-    private final String SHOW_REMOVE_SAGITTAE_BUTTON = "show_remove_sagittae_button";
+    private final String SHOW_REMOVE_SAGITTAE_BUTTON_KEY = "show_remove_sagittae_button";
+    private final String CIRCLE_VISIBILITY_KEY = "circle_visibility";
+    private final String SOUND_ON_OFF_KEY = "sound_on_off";
 
     private final String OPTIONS_NAME = "WiFiAugmentedRealityActivity";
 
     private final int DEFAULT_THRESHOLD = 3000;
     private final int DEFAULT_SAGGITAE_LENGTH = 5;
+    private final boolean DEFAULT_SAGITTAE_BUTTON_VISIBILITY = true;
+    private final boolean DEFAULT_CIRCLE_VISIBILITY = true;
+    private final boolean DEFAULT_SOUND_STATE = true;
 
     private SharedPreferences mPref;
 
@@ -61,14 +67,42 @@ public class OptionsHolder {
     boolean loadShowClearSagittaeButton() {
         loadPreferences();
 
-        return mPref.getBoolean(SHOW_REMOVE_SAGITTAE_BUTTON, true);
+        return mPref.getBoolean(SHOW_REMOVE_SAGITTAE_BUTTON_KEY, DEFAULT_SAGITTAE_BUTTON_VISIBILITY);
     }
 
     void saveShowClearSagittaeButton(boolean value) {
         loadPreferences();
 
         SharedPreferences.Editor e = mPref.edit();
-        e.putBoolean(SHOW_REMOVE_SAGITTAE_BUTTON, value);
+        e.putBoolean(SHOW_REMOVE_SAGITTAE_BUTTON_KEY, value);
+        e.apply();
+    }
+
+    boolean loadCircleVisibility() {
+        loadPreferences();
+
+        return mPref.getBoolean(CIRCLE_VISIBILITY_KEY, DEFAULT_CIRCLE_VISIBILITY);
+    }
+
+    void saveCircleVisibility(boolean value) {
+        loadPreferences();
+
+        SharedPreferences.Editor e = mPref.edit();
+        e.putBoolean(CIRCLE_VISIBILITY_KEY, value);
+        e.apply();
+    }
+
+    boolean loadSoundState() {
+        loadPreferences();
+
+        return mPref.getBoolean(SOUND_ON_OFF_KEY, DEFAULT_SOUND_STATE);
+    }
+
+    void saveSoundState(boolean value) {
+        loadPreferences();
+
+        SharedPreferences.Editor e = mPref.edit();
+        e.putBoolean(SOUND_ON_OFF_KEY, value);
         e.apply();
     }
 }

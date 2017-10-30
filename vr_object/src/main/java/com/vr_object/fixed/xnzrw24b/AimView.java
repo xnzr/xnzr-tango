@@ -106,7 +106,7 @@ public final class AimView extends View {
 
     private void beepLoop() {
         while (!Thread.currentThread().isInterrupted()) {
-            if (mRadius > 0 && MaxRadius > 0) {
+            if (mRadius > 0 && MaxRadius > 0 && soundIsOn) {
                 mToneGenerator.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 100);
                 long pause = 2000;
                 float rate = mRadius / MaxRadius;
@@ -165,6 +165,11 @@ public final class AimView extends View {
     private boolean mHasSize = false;
     private int mWidth;
     private int mHeight;
+    private boolean soundIsOn = true;
+
+    public void setSound(boolean value) {
+        soundIsOn = value;
+    }
 
     public void setLevel(double level) {
         mLevel = level;
