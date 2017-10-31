@@ -34,6 +34,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.AndroidRuntimeException;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -130,6 +131,7 @@ public class WiFiAugmentedRealityActivity extends Activity
     private TextView mSagittaeLengthView;
 
     private AimView mAimView;
+    private TextView mScanningMessage;
     FrameLayout mCircleFrameLayout;
 
 
@@ -203,6 +205,14 @@ public class WiFiAugmentedRealityActivity extends Activity
                 FrameLayout.LayoutParams.MATCH_PARENT));
         mCircleFrameLayout = (FrameLayout) findViewById(circle_container);
         mCircleFrameLayout.addView(mAimView);
+
+        mScanningMessage = (TextView) findViewById(tw_scanning_message);
+//        mScanningMessage.setText(R.string.message_scanning);
+//        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+//        params.gravity = Gravity.CENTER;
+//        mScanningMessage.setLayoutParams(params);
+//        mCircleFrameLayout.addView(mScanningMessage);
+        mScanningMessage.setVisibility(View.GONE);
 
         loadOptions();
 
@@ -310,6 +320,13 @@ public class WiFiAugmentedRealityActivity extends Activity
         }
 
         setLevel(level);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mScanningMessage.setVisibility(View.GONE);
+            }
+        });
 
         //update progress bar
         int tmp = Math.abs(mProgressBar.getMax() - Math.min(progress, mProgressBar.getMax()));
@@ -1387,6 +1404,22 @@ public class WiFiAugmentedRealityActivity extends Activity
 
     private void changeState(int newState) {
         state = newState;
+
+        if (state == STATE_READING) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mScanningMessage.setVisibility(View.VISIBLE);
+                }
+            });
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mScanningMessage.setVisibility(View.GONE);
+                }
+            });
+        }
     }
 
     private void closeDevice() {

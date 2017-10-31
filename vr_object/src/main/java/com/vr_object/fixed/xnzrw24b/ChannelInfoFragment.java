@@ -63,18 +63,6 @@ public class ChannelInfoFragment extends Fragment {
                 break;
             }
         }
-//        NetworkInfo networkInfo = null;
-//        for (NetworkInfo netInfo: networks) {
-//            if (netInfo.Ssid.equals(packet.apName) && netInfo.Mac.equals(packet.mac)) {
-//                networkInfo = netInfo;
-//            }
-//        }
-//
-//        if (networkInfo == null) {
-//            networkInfo = new NetworkInfo(packet);
-//            networks.add(networkInfo);
-//            mAdapter.notifyDataSetChanged();
-//        }
     }
 
     public void clearList() {

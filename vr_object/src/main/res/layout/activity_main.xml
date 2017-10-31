@@ -105,6 +105,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"></FrameLayout>
 
+    <TextView
+        android:id="@+id/tw_scanning_message"
+        android:text="@string/message_scanning"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <ScrollView
         android:id="@+id/options_scroll_view"

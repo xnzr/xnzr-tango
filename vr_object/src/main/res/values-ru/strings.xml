@@ -15,4 +15,5 @@
     <string name="sound_switch">Звук</string>
     <string name="text_on_male">Включен</string>
     <string name="text_off_male">Выключен</string>
+    <string name="message_scanning">Сканирование…</string>
 </resources>
