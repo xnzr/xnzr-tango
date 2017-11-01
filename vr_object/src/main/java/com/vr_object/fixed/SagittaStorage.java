@@ -2,6 +2,10 @@ package com.vr_object.fixed;
 
 import android.graphics.Bitmap;
 
+import com.google.atap.tangoservice.Tango;
+import com.google.atap.tangoservice.TangoCameraIntrinsics;
+import com.google.atap.tangoservice.TangoPoseData;
+import com.projecttango.tangosupport.TangoSupport;
 import com.vr_object.fixed.xnzrw24b.OpenGlSagitta;
 
 import java.util.ArrayList;
@@ -23,6 +27,8 @@ class SagittaStorage implements OpenGlObject {
     private Bitmap mTexture;
     private float[] mProjectionMatrix;
     private float[] mViewMatrix;
+    private float[] mCurPose;
+    private Tango mTango;
 
     void setSagittaLength(float length) {
         if (mSagittaObject != null) {
@@ -59,6 +65,42 @@ class SagittaStorage implements OpenGlObject {
     public void setUpProgramsAndBuffers(Bitmap texture) {
         mTexture = texture;
         mSagittaObject.setUpProgramsAndBuffers(texture);
+    }
+
+    void putPose(float[] pose) {
+        //mCurPose = pose;
+    }
+
+    public void setTangoService(Tango t) {
+        mTango = t;
+    }
+    void getPose() {
+
+//        if (mIsFrameAvailableTangoThread.compareAndSet(true, false)) {
+//            // {@code mRgbTimestampGlThread} contains the exact timestamp at
+//            // which the rendered RGB frame was acquired.
+//            double mRgbTimestampGlThread =
+//                    mTango.updateTexture(TangoCameraIntrinsics.
+//                            TANGO_CAMERA_COLOR);
+//
+//            TangoPoseData startPose = TangoSupport.getPoseAtTime(
+//                    mRgbTimestampGlThread,
+//                    TangoPoseData.COORDINATE_FRAME_AREA_DESCRIPTION,
+//                    TangoPoseData.COORDINATE_FRAME_CAMERA_COLOR,
+//                    TangoSupport.TANGO_SUPPORT_ENGINE_OPENGL,
+//                    0);
+//
+//            if (startPose.statusCode == TangoPoseData.POSE_VALID) {
+//
+//                float[] end = new float[4];
+//                float[] start = new float[4];
+//
+//                start[0] = (float) startPose.translation[0];
+//                start[1] = (float) startPose.translation[1];
+//                start[2] = (float) startPose.translation[2];
+//                start[3] = 0.0f;//(float)pose.translation[2];
+//            }
+//        }
     }
 
     void addModelMatrix(float[] modelMatrix) {

@@ -34,13 +34,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.AndroidRuntimeException;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -92,7 +90,7 @@ public class WiFiAugmentedRealityActivity extends Activity
     private boolean mIsConnected = false;
     private SpatialIntersect intersector;
 
-    private boolean debugSagitta = false;
+    private boolean debugSagitta = true;
 
     // Texture rendering related fields.
     // NOTE: Naming indicates which thread is in charge of updating this variable
@@ -384,6 +382,7 @@ public class WiFiAugmentedRealityActivity extends Activity
         });
 
         intersector = new SpatialIntersect();
+        mRenderer.setTangoService(mTango);
     }
 
     @Override
@@ -994,7 +993,7 @@ public class WiFiAugmentedRealityActivity extends Activity
         int prevSl = optionsHolder.loadSagittaLength();
         if (sl != prevSl) {
             optionsHolder.saveSagittaLength(sl);
-            mRenderer.setSagittaLenght(sl);
+            mRenderer.setSagittaLength(sl);
             Toast.makeText(getApplicationContext(), R.string.sagittae_length_changed, Toast.LENGTH_LONG).show();
         }
 

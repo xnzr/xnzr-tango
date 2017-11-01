@@ -7,6 +7,8 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 
+import com.google.atap.tangoservice.Tango;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -48,6 +50,7 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
     private SagittaStorage mSagittae;
     private Context mContext;
     private OptionsHolder optionsHolder;
+    private Tango mTango;
 
     WiFiAugmentedRealityRenderer(Context context, RenderCallback callback) {
         mContext = context;
@@ -123,12 +126,16 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         return mOpenGlCameraPreview == null ? -1 : mOpenGlCameraPreview.getTextureId();
     }
 
+    public void setTangoService(Tango t) {
+        mTango = t;
+    }
+
     private void initSagitta(float width, float length) {
         OpenGlCylinder cylinder = new OpenGlCylinder(width, length, 8);
         mSagittae.setObject(cylinder);
     }
 
-    public void setSagittaLenght(float length) {
+    void setSagittaLength(float length) {
         mSagittae.setSagittaLength(length);
     }
 
@@ -154,6 +161,10 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         mSagittae.setViewMatrix(viewMatrix);
 
         mLine.setViewMatrix(viewMatrix);
+    }
+
+    void putPose(float[] pose) {
+        mSagittae.putPose(pose);
     }
 
     void addPeleng(float[] matrix) {

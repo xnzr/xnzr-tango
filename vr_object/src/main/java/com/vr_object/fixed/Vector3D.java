@@ -17,7 +17,7 @@ public class Vector3D {
 
         result[x] = lhs[y]*rhs[z] - lhs[z]*rhs[y];
         result[y] = lhs[z]*rhs[x] - lhs[x]*rhs[z];
-        result[z] = lhs[x]*rhs[y] - lhs[y]*rhs[z];
+        result[z] = lhs[x]*rhs[y] - lhs[y]*rhs[x];
 
         return result;
     }
@@ -77,7 +77,7 @@ public class Vector3D {
         float[] w = createVector(lineA, dot);
 
         float[] mul = vectorMultiply(v_l, w);
-        return vectorLength(mul);
+        return vectorLength(mul)/vectorLength(v_l);
     }
 
     /**
@@ -87,7 +87,7 @@ public class Vector3D {
      * @param segmentEnd - 3D coordinates of another segment vertex.
      * @return the distance between dot and line segment.
      */
-    public static float distanceDotSegment(float[] dot, float[] segmentStart, float[] segmentEnd) {
+    public static float distancevertexSegment(float[] dot, float[] segmentStart, float[] segmentEnd) {
         float[] vecSegment = createVector(segmentStart, segmentEnd);
         float[] vecDot = createVector(segmentStart, dot);
         float scalarMul = scalarMultiply(vecSegment, vecDot);

@@ -4,7 +4,9 @@ import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
+import android.util.Log;
 
+import com.google.atap.tangoservice.TangoPoseData;
 import com.vr_object.fixed.xnzrw24b.OpenGlSagitta;
 
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ public class OpenGlCylinder implements OpenGlSagitta {
     private int[] mTextures;
     private int mProgram;
     private float mHeight;
+    private float mWidthScale = 1;
 
     private float[] mModelMatrix = new float[16];
     private float[] mViewMatrix = new float[16];
@@ -114,7 +117,9 @@ public class OpenGlCylinder implements OpenGlSagitta {
 
     private void setUpScaleMatrix() {
         Matrix.setIdentityM(mScaleMatrix, 0);
-        mScaleMatrix[10] = mHeight;
+        mScaleMatrix[0] = mWidthScale; //x
+        mScaleMatrix[5] = mWidthScale; //y
+        mScaleMatrix[10] = mHeight; //z
     }
 
     @Override
@@ -166,6 +171,12 @@ public class OpenGlCylinder implements OpenGlSagitta {
         GLES20.glUniformMatrix4fv(um, 1, false, mvpMatrix, 0);
 
         mMesh.drawMesh(sph, sth);
+
+        float distance = calcDistance(mvpMatrix);
+        if (distance > 2) {
+            mWidthScale = distance;
+            setUpScaleMatrix();
+        }
     }
 
     private float calcDistance(float [] mvpMatrix) {
@@ -174,11 +185,31 @@ public class OpenGlCylinder implements OpenGlSagitta {
         Matrix.multiplyMV(startVec, 0, mvpMatrix, 0, startVec, 0);
 
         float[] endVec = new float[4];
-        endVec[2] = mHeight;
+        endVec[2] = 1;
         endVec[3] = 1;
         Matrix.multiplyMV(endVec, 0, mvpMatrix, 0, endVec, 0);
 
-        return 0;
+        float[] camMatrix = new float[16];
+        Matrix.multiplyMM(camMatrix, 0, mProjectionMatrix, 0, mModelMatrix, 0);
+        float[] camCoord = getCurPose();
+//        camCoord[3] = 1;
+//        Matrix.multiplyMV(camCoord, 0, camMatrix, 0, camCoord, 0);
+
+//        float d = Vector3D.distanceVertices(startVec, camCoord);
+        float d = Vector3D.distancevertexSegment(camCoord, startVec, endVec);
+
+        Log.d("calcDistance", "distance: " + d);
+
+        return d;
+    }
+
+    private float[] getCurPose() {
+        TangoPoseData pose = new TangoPoseData();
+        float[] p = new float[4];
+        for (int i = 0; i < 3; i++) {
+            p[i] = (float) pose.translation[i];
+        }
+        return p;
     }
 
     @Override
