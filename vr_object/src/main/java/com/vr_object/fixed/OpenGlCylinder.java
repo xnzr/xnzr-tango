@@ -175,8 +175,10 @@ public class OpenGlCylinder implements OpenGlSagitta {
         float distance = calcDistance(mvpMatrix);
         if (distance > 2) {
             mWidthScale = distance;
-            setUpScaleMatrix();
+        } else {
+            mWidthScale = 1;
         }
+        setUpScaleMatrix();
     }
 
     private float calcDistance(float [] mvpMatrix) {

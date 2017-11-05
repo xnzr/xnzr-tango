@@ -43,61 +43,29 @@
         android:src="@drawable/trash_recyclebin_empty_closed"/>
 
     <Button
+        android:id="@+id/b_start_recording"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|start"
+        android:visibility="gone"
+        android:text=">"
+        android:onClick="startRecording"/>
+    <Button
+        android:id="@+id/b_stop_recording"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|start"
+        android:visibility="gone"
+        android:text="||"
+        android:onClick="stopRecording"/>
+
+    <Button
         android:id="@+id/b_options"
         android:onClick="showOptions"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="top|end"
         android:background="@drawable/gear"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="1">
-
-        <FrameLayout
-            android:id="@+id/networks_list_content_frame"
-            android:layout_width="130dp"
-            android:layout_gravity="start"
-            android:layout_height="match_parent"
-            android:layout_weight="0.1875"></FrameLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:orientation="vertical">
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-
-        <FrameLayout
-            android:id="@+id/channels_list_content_frame"
-            android:layout_width="130dp"
-            android:layout_gravity="end"
-            android:layout_height="match_parent"
-            android:layout_weight="0.1875"></FrameLayout>
-
-    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/circle_container"
@@ -250,5 +218,54 @@
         </LinearLayout>
 
     </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <FrameLayout
+            android:id="@+id/networks_list_content_frame"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:layout_weight="0.1875"></FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+
+        <FrameLayout
+            android:id="@+id/channels_list_content_frame"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_weight="0.1875"></FrameLayout>
+
+    </LinearLayout>
 
 </FrameLayout>

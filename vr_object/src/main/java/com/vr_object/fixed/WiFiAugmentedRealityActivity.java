@@ -1,19 +1,5 @@
 package com.vr_object.fixed;
 
-import com.google.atap.tangoservice.Tango;
-import com.google.atap.tangoservice.Tango.OnTangoUpdateListener;
-import com.google.atap.tangoservice.TangoCameraIntrinsics;
-import com.google.atap.tangoservice.TangoConfig;
-import com.google.atap.tangoservice.TangoCoordinateFramePair;
-import com.google.atap.tangoservice.TangoErrorException;
-import com.google.atap.tangoservice.TangoEvent;
-import com.google.atap.tangoservice.TangoException;
-import com.google.atap.tangoservice.TangoInvalidException;
-import com.google.atap.tangoservice.TangoOutOfDateException;
-import com.google.atap.tangoservice.TangoPointCloudData;
-import com.google.atap.tangoservice.TangoPoseData;
-import com.google.atap.tangoservice.TangoXyzIjData;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
@@ -45,12 +31,19 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import com.google.atap.tangoservice.Tango;
+import com.google.atap.tangoservice.Tango.OnTangoUpdateListener;
+import com.google.atap.tangoservice.TangoCameraIntrinsics;
+import com.google.atap.tangoservice.TangoConfig;
+import com.google.atap.tangoservice.TangoCoordinateFramePair;
+import com.google.atap.tangoservice.TangoErrorException;
+import com.google.atap.tangoservice.TangoEvent;
+import com.google.atap.tangoservice.TangoException;
+import com.google.atap.tangoservice.TangoInvalidException;
+import com.google.atap.tangoservice.TangoOutOfDateException;
+import com.google.atap.tangoservice.TangoPointCloudData;
+import com.google.atap.tangoservice.TangoPoseData;
+import com.google.atap.tangoservice.TangoXyzIjData;
 import com.projecttango.tangosupport.TangoPointCloudManager;
 import com.projecttango.tangosupport.TangoSupport;
 import com.vr_object.fixed.xnzrw24b.AimView;
@@ -69,7 +62,22 @@ import com.vr_object.fixed.xnzrw24b.WFParseException;
 import com.vr_object.fixed.xnzrw24b.data.ChannelInfo;
 import com.vr_object.fixed.xnzrw24b.data.NetworkInfo;
 
-import static com.vr_object.fixed.R.id.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.vr_object.fixed.R.id.b_clear_sagittae;
+import static com.vr_object.fixed.R.id.b_hide_clear_sagittae;
+import static com.vr_object.fixed.R.id.b_on_off_circle;
+import static com.vr_object.fixed.R.id.b_on_off_sound;
+import static com.vr_object.fixed.R.id.b_start_recording;
+import static com.vr_object.fixed.R.id.b_stop_recording;
+import static com.vr_object.fixed.R.id.circle_container;
+import static com.vr_object.fixed.R.id.options_scroll_view;
+import static com.vr_object.fixed.R.id.sagittae_length_setter;
+import static com.vr_object.fixed.R.id.threshold_setter;
+import static com.vr_object.fixed.R.id.tw_scanning_message;
 
 public class WiFiAugmentedRealityActivity extends Activity
         implements View.OnClickListener,
@@ -90,7 +98,7 @@ public class WiFiAugmentedRealityActivity extends Activity
     private boolean mIsConnected = false;
     private SpatialIntersect intersector;
 
-    private boolean debugSagitta = true;
+    private boolean debugSagitta = false;
 
     // Texture rendering related fields.
     // NOTE: Naming indicates which thread is in charge of updating this variable
@@ -137,6 +145,7 @@ public class WiFiAugmentedRealityActivity extends Activity
 
     private Thread thread;
     private UsbSerialPortTi port = null;
+    private ScreenRecorder mScreenRecorder;
 
 
     private final int INIT_INTERVAL_MS = 3000;
@@ -173,6 +182,8 @@ public class WiFiAugmentedRealityActivity extends Activity
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         int tangoVersion = Tango.getVersion(this.getApplicationContext());
+
+        //mScreenRecorder = new ScreenRecorder(this);
 
         mPointCloudManager = new TangoPointCloudManager();
 
@@ -409,6 +420,12 @@ public class WiFiAugmentedRealityActivity extends Activity
                 Log.e(TAG, getString(R.string.exception_tango_error), e);
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //mScreenRecorder.destroy();
     }
 
 
@@ -979,6 +996,22 @@ public class WiFiAugmentedRealityActivity extends Activity
 
     public void clearPelengs(View view) {
         mRenderer.clearPelengs();
+    }
+
+    public void startRecording(View view) {
+        if (mScreenRecorder != null) {
+            mScreenRecorder.startRecording();
+        }
+        findViewById(b_start_recording).setVisibility(View.GONE);
+        findViewById(b_stop_recording).setVisibility(View.VISIBLE);
+    }
+
+    public void stopRecording(View view) {
+        if (mScreenRecorder != null) {
+            mScreenRecorder.stopRecording();
+        }
+        findViewById(b_start_recording).setVisibility(View.VISIBLE);
+        findViewById(b_stop_recording).setVisibility(View.GONE);
     }
 
 
