@@ -1539,7 +1539,7 @@ public class WiFiAugmentedRealityActivity extends Activity
         if (REQUEST_CODE_SCREEN_CAPTURE == requestCode) {
             if (resultCode != Activity.RESULT_OK) {
                 // when no permission
-                Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_LONG).show();
                 return;
             }
             startScreenRecorder(resultCode, data);

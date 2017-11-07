@@ -50,28 +50,31 @@
         android:layout_gravity="top|end"
         android:orientation="vertical">
 
-        <Button
+        <ImageButton
             android:id="@+id/b_options"
             android:onClick="showOptions"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="top|end"
-            android:background="@drawable/gear"/>
+            android:src="@drawable/gear"
+            android:scaleType="fitEnd" />
 
-        <Button
+        <ImageButton
             android:id="@+id/b_start_recording"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:visibility="visible"
-            android:text=">"
+            android:src="@drawable/icon_record_280x280"
+            android:scaleType="fitEnd"
             android:onClick="startRecording"/>
-        <Button
+        <ImageButton
             android:id="@+id/b_stop_recording"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="bottom|start"
             android:visibility="gone"
-            android:text="||"
+            android:src="@drawable/icon_stop_record_512x512"
+            android:scaleType="fitEnd"
             android:onClick="stopRecording"/>
 
     </LinearLayout>
