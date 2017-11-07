@@ -25,4 +25,5 @@
     <string name="text_on_male">On</string>
     <string name="text_off_male">Off</string>
     <string name="message_scanning">Scanning…</string>
+    <string name="no_sdcard_permission">No permission of writing external storage.</string>
 </resources>

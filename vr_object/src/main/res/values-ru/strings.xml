@@ -16,4 +16,5 @@
     <string name="text_on_male">Включен</string>
     <string name="text_off_male">Выключен</string>
     <string name="message_scanning">Сканирование…</string>
+    <string name="no_sdcard_permission">Нет доступа для записи в хранилище устройства.</string>
 </resources>

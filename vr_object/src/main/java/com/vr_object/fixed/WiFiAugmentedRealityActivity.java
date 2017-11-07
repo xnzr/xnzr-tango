@@ -1,5 +1,6 @@
 package com.vr_object.fixed;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
@@ -11,6 +12,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.media.projection.MediaProjectionManager;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Bundle;
@@ -61,8 +63,10 @@ import com.vr_object.fixed.xnzrw24b.WFPacketCreator;
 import com.vr_object.fixed.xnzrw24b.WFParseException;
 import com.vr_object.fixed.xnzrw24b.data.ChannelInfo;
 import com.vr_object.fixed.xnzrw24b.data.NetworkInfo;
+import com.vr_object.screencast.ScreenRecorderService;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -86,6 +90,11 @@ public class WiFiAugmentedRealityActivity extends Activity
         ChannelInfoFragment.OnListFragmentInteractionListener {
     private static final String TAG = WiFiAugmentedRealityActivity.class.getSimpleName();
     private static final int INVALID_TEXTURE_ID = 0;
+    private static final boolean DEBUG = false;
+    private static final int REQUEST_CODE_SCREEN_CAPTURE = 1;
+    private static final int EXTERNAL_STORAGE_REQUEST_CODE = 2;
+    private static final int RECORD_AUDIO_REQUEST_CODE = 2;
+    private MyBroadcastReceiver mReceiver;
 
     private TextView mTextView;
     //private TextView mTextView2;
@@ -145,7 +154,7 @@ public class WiFiAugmentedRealityActivity extends Activity
 
     private Thread thread;
     private UsbSerialPortTi port = null;
-    private ScreenRecorder mScreenRecorder;
+//    private ScreenRecorder mScreenRecorder;
 
 
     private final int INIT_INTERVAL_MS = 3000;
@@ -232,8 +241,6 @@ public class WiFiAugmentedRealityActivity extends Activity
         mSagittaeLengthView.setText(String.format("%s %d", getString(R.string.sagittae_length_text), mSagittaeLength));
 
 
-
-
         mThresholdSetter.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -306,6 +313,10 @@ public class WiFiAugmentedRealityActivity extends Activity
                 }
             }
         };
+
+        if (mReceiver == null) {
+            mReceiver = new MyBroadcastReceiver(this);
+        }
     }
 
 
@@ -394,6 +405,12 @@ public class WiFiAugmentedRealityActivity extends Activity
 
         intersector = new SpatialIntersect();
         mRenderer.setTangoService(mTango);
+
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ScreenRecorderService.ACTION_QUERY_STATUS_RESULT);
+        registerReceiver(mReceiver, intentFilter);
+        queryRecordingStatus();
+
     }
 
     @Override
@@ -420,6 +437,8 @@ public class WiFiAugmentedRealityActivity extends Activity
                 Log.e(TAG, getString(R.string.exception_tango_error), e);
             }
         }
+
+        unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -998,23 +1017,6 @@ public class WiFiAugmentedRealityActivity extends Activity
         mRenderer.clearPelengs();
     }
 
-    public void startRecording(View view) {
-        if (mScreenRecorder != null) {
-            mScreenRecorder.startRecording();
-        }
-        findViewById(b_start_recording).setVisibility(View.GONE);
-        findViewById(b_stop_recording).setVisibility(View.VISIBLE);
-    }
-
-    public void stopRecording(View view) {
-        if (mScreenRecorder != null) {
-            mScreenRecorder.stopRecording();
-        }
-        findViewById(b_start_recording).setVisibility(View.VISIBLE);
-        findViewById(b_stop_recording).setVisibility(View.GONE);
-    }
-
-
     private void saveOptions() {
         SeekBar thrSB = (SeekBar) findViewById(threshold_setter);
         int thr = thrSB.getProgress();
@@ -1527,6 +1529,99 @@ public class WiFiAugmentedRealityActivity extends Activity
                 changer = null;
             }
             changeChannel(mSelectedChannel);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if (DEBUG) Log.v(TAG, "onActivityResult:resultCode=" + resultCode + ",data=" + data);
+        super.onActivityResult(requestCode, resultCode, data);
+        if (REQUEST_CODE_SCREEN_CAPTURE == requestCode) {
+            if (resultCode != Activity.RESULT_OK) {
+                // when no permission
+                Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
+                return;
+            }
+            startScreenRecorder(resultCode, data);
+        }
+    }
+
+    public void startRecording(View view) {
+//        if (mScreenRecorder != null) {
+//            mScreenRecorder.startRecording();
+//        }
+
+        //Check permission.
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    EXTERNAL_STORAGE_REQUEST_CODE);
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_REQUEST_CODE);
+        }
+
+
+        findViewById(b_start_recording).setVisibility(View.GONE);
+        findViewById(b_stop_recording).setVisibility(View.VISIBLE);
+        final MediaProjectionManager manager
+                = (MediaProjectionManager)getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        final Intent permissionIntent = manager.createScreenCaptureIntent();
+        startActivityForResult(permissionIntent, REQUEST_CODE_SCREEN_CAPTURE);
+    }
+
+    public void stopRecording(View view) {
+//        if (mScreenRecorder != null) {
+//            mScreenRecorder.stopRecording();
+//        }
+        findViewById(b_start_recording).setVisibility(View.VISIBLE);
+        findViewById(b_stop_recording).setVisibility(View.GONE);
+
+        final Intent intent = new Intent(WiFiAugmentedRealityActivity.this, ScreenRecorderService.class);
+        intent.setAction(ScreenRecorderService.ACTION_STOP);
+        startService(intent);
+    }
+
+    private void queryRecordingStatus() {
+        if (DEBUG) Log.v(TAG, "queryRecording:");
+        final Intent intent = new Intent(this, ScreenRecorderService.class);
+        intent.setAction(ScreenRecorderService.ACTION_QUERY_STATUS);
+        startService(intent);
+    }
+
+    private void startScreenRecorder(final int resultCode, final Intent data) {
+        final Intent intent = new Intent(this, ScreenRecorderService.class);
+        intent.setAction(ScreenRecorderService.ACTION_START);
+        intent.putExtra(ScreenRecorderService.EXTRA_RESULT_CODE, resultCode);
+        intent.putExtras(data);
+        startService(intent);
+    }
+
+    private void updateRecording(final boolean isRecording, final boolean isPausing) {
+        if (DEBUG) Log.v(TAG, "updateRecording:isRecording=" + isRecording + ",isPausing=" + isPausing);
+        //TODO: update buttons
+    }
+
+
+    private static final class MyBroadcastReceiver extends BroadcastReceiver {
+        private final WeakReference<WiFiAugmentedRealityActivity> mWeakParent;
+        public MyBroadcastReceiver(final WiFiAugmentedRealityActivity parent) {
+            mWeakParent = new WeakReference<WiFiAugmentedRealityActivity>(parent);
+        }
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (DEBUG) Log.v(TAG, "onReceive:" + intent);
+            final String action = intent.getAction();
+            if (ScreenRecorderService.ACTION_QUERY_STATUS_RESULT.equals(action)) {
+                final boolean isRecording = intent.getBooleanExtra(ScreenRecorderService.EXTRA_QUERY_RESULT_RECORDING, false);
+                final boolean isPausing = intent.getBooleanExtra(ScreenRecorderService.EXTRA_QUERY_RESULT_PAUSING, false);
+                final WiFiAugmentedRealityActivity parent = mWeakParent.get();
+                if (parent != null) {
+                    parent.updateRecording(isRecording, isPausing);
+                }
+            }
         }
     }
 }

@@ -42,30 +42,39 @@
         android:scaleType="fitEnd"
         android:src="@drawable/trash_recyclebin_empty_closed"/>
 
-    <Button
-        android:id="@+id/b_start_recording"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom|start"
-        android:visibility="gone"
-        android:text=">"
-        android:onClick="startRecording"/>
-    <Button
-        android:id="@+id/b_stop_recording"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom|start"
-        android:visibility="gone"
-        android:text="||"
-        android:onClick="stopRecording"/>
 
-    <Button
-        android:id="@+id/b_options"
-        android:onClick="showOptions"
+
+    <LinearLayout
         android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_height="match_parent"
         android:layout_gravity="top|end"
-        android:background="@drawable/gear"/>
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/b_options"
+            android:onClick="showOptions"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="top|end"
+            android:background="@drawable/gear"/>
+
+        <Button
+            android:id="@+id/b_start_recording"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="visible"
+            android:text=">"
+            android:onClick="startRecording"/>
+        <Button
+            android:id="@+id/b_stop_recording"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|start"
+            android:visibility="gone"
+            android:text="||"
+            android:onClick="stopRecording"/>
+
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/circle_container"

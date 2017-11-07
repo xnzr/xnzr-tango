@@ -57,7 +57,7 @@ public class OpenGlCylinder implements OpenGlSagitta {
         for (int i = 0; i < n; i++) {
             vertices[3*i]     = (float) (radius * Math.cos(angle*i));
             vertices[3*i + 1] = (float) (radius * Math.sin(angle*i));
-            vertices[3*i + 2] = 0.01f; //Zero distance to camera means bottom culling. We want to avoid it.
+            vertices[3*i + 2] = 0.0001f; //Zero distance to camera means bottom culling. We want to avoid it.
 
             vertices[3*n + 3*i]     = (float) (radius * Math.cos(angle*i));
             vertices[3*n + 3*i + 1] = (float) (radius * Math.sin(angle*i));
