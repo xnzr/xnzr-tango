@@ -71,11 +71,18 @@
             android:id="@+id/b_stop_recording"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_gravity="bottom|start"
             android:visibility="gone"
             android:src="@drawable/icon_stop_record_512x512"
             android:scaleType="fitEnd"
             android:onClick="stopRecording"/>
+
+        <ImageButton
+            android:onClick="restartScan"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="visible"
+            android:src="@drawable/icon_restart_128"
+            android:scaleType="fitEnd" />
 
     </LinearLayout>
 

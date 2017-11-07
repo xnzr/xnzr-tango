@@ -991,6 +991,11 @@ public class WiFiAugmentedRealityActivity extends Activity
         Log.d(TAG, "onClick");
     }
 
+    public void restartScan(View view) {
+        changeState(STATE_INIT);
+        clearRadius();
+    }
+
     public void showOptions(View view) {
         loadOptions();
         findViewById(options_scroll_view).setVisibility(View.VISIBLE);
