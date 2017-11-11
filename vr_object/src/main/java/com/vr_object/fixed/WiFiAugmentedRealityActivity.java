@@ -30,6 +30,7 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -128,6 +129,8 @@ public class WiFiAugmentedRealityActivity extends Activity
 
     private TangoPointCloudManager mPointCloudManager;
 
+    private TabHost optionsTabbedWindow;
+
     ///usb
     private NetworkInfo mSelectedNetwork;
     private int mSelectedChannel = 0;
@@ -225,62 +228,12 @@ public class WiFiAugmentedRealityActivity extends Activity
         mCircleFrameLayout.addView(mAimView);
 
         mScanningMessage = (TextView) findViewById(tw_scanning_message);
-//        mScanningMessage.setText(R.string.message_scanning);
-//        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-//        params.gravity = Gravity.CENTER;
-//        mScanningMessage.setLayoutParams(params);
-//        mCircleFrameLayout.addView(mScanningMessage);
         mScanningMessage.setVisibility(View.GONE);
 
         loadOptions();
-
-        mThreshold = mThresholdSetter.getProgress();
-        mThresholdView.setText(String.format("%s %d", getString(R.string.threshold_text), mThreshold));
-
-        int mSagittaeLength = mSagittaeLenghtSetter.getProgress();
-        mSagittaeLengthView.setText(String.format("%s %d", getString(R.string.sagittae_length_text), mSagittaeLength));
-
-
-        mThresholdSetter.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                setThreshold(progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                setThreshold(seekBar.getProgress());
-            }
-
-            private void setThreshold(int val) {
-                mThresholdView.setText(String.format("%s%d", getResources().getString(R.string.threshold_text), val));
-            }
-        });
-
-        mSagittaeLenghtSetter.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                setLength(progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                setLength(seekBar.getProgress());
-            }
-
-            private void setLength(int length) {
-                mSagittaeLengthView.setText(String.format("%s%d", getResources().getString(R.string.sagittae_length_text), length));
-            }
-        });
+        setupThresholdSetter();
+        setupSaggitaeLengthSetter();
+        setupTabbedOptions();
 
         /// usb
         networksFragment = NetworkInfoFragment.newInstance(this);
@@ -304,7 +257,7 @@ public class WiFiAugmentedRealityActivity extends Activity
                                 mLevelCalculator.handleInfo(packet);
                                 double level = mLevelCalculator.getAvg();
 
-                                WiFiAugmentedRealityActivity.this.UpdateLevel(level);
+                                WiFiAugmentedRealityActivity.this.updateLevel(level);
                             }
                         }
                     } catch (WFParseException e) {
@@ -319,8 +272,73 @@ public class WiFiAugmentedRealityActivity extends Activity
         }
     }
 
+    private void setupSaggitaeLengthSetter() {
+        int mSagittaeLength = mSagittaeLenghtSetter.getProgress();
+        mSagittaeLengthView.setText(String.format("%s %d", getString(R.string.sagittae_length_text), mSagittaeLength));
 
-    private void UpdateLevel(double level) {
+        mSagittaeLenghtSetter.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                setLength(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                setLength(seekBar.getProgress());
+            }
+
+            private void setLength(int length) {
+                mSagittaeLengthView.setText(String.format("%s%d", getResources().getString(R.string.sagittae_length_text), length));
+            }
+        });
+    }
+
+    private void setupThresholdSetter() {
+        mThreshold = mThresholdSetter.getProgress();
+        mThresholdView.setText(String.format("%s %d", getString(R.string.threshold_text), mThreshold));
+
+        mThresholdSetter.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                setThreshold(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                setThreshold(seekBar.getProgress());
+            }
+
+            private void setThreshold(int val) {
+                mThresholdView.setText(String.format("%s%d", getResources().getString(R.string.threshold_text), val));
+            }
+        });
+    }
+
+    private void setupTabbedOptions() {
+        optionsTabbedWindow = (TabHost) findViewById(R.id.options_tab_host);
+        optionsTabbedWindow.setup();
+
+        TabHost.TabSpec pelengOptions = optionsTabbedWindow.newTabSpec(getString(R.string.peleng_tab_head));
+        pelengOptions.setContent(R.id.options_peleng_tab);
+        pelengOptions.setIndicator(this.getString(R.string.peleng_tab_head));
+        optionsTabbedWindow.addTab(pelengOptions);
+
+        TabHost.TabSpec screenOptions = optionsTabbedWindow.newTabSpec(getString(R.string.screen_tab_head));
+        screenOptions.setContent(R.id.options_screen_tab);
+        screenOptions.setIndicator(this.getString(R.string.screen_tab_head));
+        optionsTabbedWindow.addTab(screenOptions);
+    }
+
+    private void updateLevel(double level) {
 
         long deltaTime = System.currentTimeMillis() - lastUpdateTime;
         int progress = (int) Math.floor(100.0 * level);
@@ -444,7 +462,6 @@ public class WiFiAugmentedRealityActivity extends Activity
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //mScreenRecorder.destroy();
     }
 
 
@@ -999,6 +1016,7 @@ public class WiFiAugmentedRealityActivity extends Activity
     public void showOptions(View view) {
         loadOptions();
         findViewById(options_scroll_view).setVisibility(View.VISIBLE);
+        findViewById(R.id.options_tab_container).setVisibility(View.VISIBLE);
     }
 
     public void closeAndSaveOptions(View view) {
@@ -1014,8 +1032,9 @@ public class WiFiAugmentedRealityActivity extends Activity
     }
 
     private void closeOptions() {
-        View scroll = findViewById(options_scroll_view);
-        scroll.setVisibility(View.GONE);
+        View optionsScreen = findViewById(options_scroll_view);
+        optionsScreen.setVisibility(View.GONE);
+        findViewById(R.id.options_tab_container).setVisibility(View.GONE);
     }
 
     public void clearPelengs(View view) {
