@@ -29,4 +29,5 @@
     <string name="permission_denied">Permission denied</string>
     <string name="peleng_tab_head">Dir finder</string>
     <string name="screen_tab_headd">Screen</string>
+    <string name="ghz_notion">GHz</string>
 </resources>

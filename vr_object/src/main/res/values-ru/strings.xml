@@ -29,4 +29,5 @@
     <string name="permission_denied">В доступе отказано</string>
     <string name="peleng_tab_head">Пеленгатор</string>
     <string name="screen_tab_head">Экран</string>
+    <string name="ghz_notion">ГГц</string>
 </resources>

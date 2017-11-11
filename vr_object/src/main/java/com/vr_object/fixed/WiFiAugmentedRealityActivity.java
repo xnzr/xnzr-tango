@@ -63,6 +63,7 @@ import com.vr_object.fixed.xnzrw24b.WFPacket;
 import com.vr_object.fixed.xnzrw24b.WFPacketCreator;
 import com.vr_object.fixed.xnzrw24b.WFParseException;
 import com.vr_object.fixed.xnzrw24b.data.ChannelInfo;
+import com.vr_object.fixed.xnzrw24b.data.ChannelsWiFi;
 import com.vr_object.fixed.xnzrw24b.data.NetworkInfo;
 import com.vr_object.screencast.ScreenRecorderService;
 
@@ -170,6 +171,7 @@ public class WiFiAugmentedRealityActivity extends Activity
     private int state = STATE_INIT;
 
     private int curChan = 1;
+    private int setChan = 1;
 
     private WFPacketCreator wfCreator = new WFPacketCreator();
     ///
@@ -1427,12 +1429,15 @@ public class WiFiAugmentedRealityActivity extends Activity
 
     private void changeChannel(int chan) {
         Log.d(TAG, "changeChannel ");
+        setChan = chan;
         if (port != null) {
             try {
-                if (chan > 0)
+                if (chan > 0) {
                     port.write(getChannelChar(chan), READ_TIMEOUT_MS);
-                else
+                } else {
                     port.write(getChannelChar(curChan), READ_TIMEOUT_MS);
+                    setChan = curChan;
+                }
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -1440,7 +1445,14 @@ public class WiFiAugmentedRealityActivity extends Activity
             if (++curChan > 13) {
                 curChan = 1;
             }
-
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    TextView tw = (TextView) findViewById(R.id.tw_current_frequency);
+                    tw.setVisibility(View.VISIBLE);
+                    tw.setText(String.format("%.3f %s", ChannelsWiFi.channelFreq24GHz(setChan), getString(R.string.ghz_notion)));
+                }
+            });
         }
     }
 
