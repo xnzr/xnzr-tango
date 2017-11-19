@@ -109,7 +109,7 @@ public class WiFiAugmentedRealityActivity extends Activity
     private boolean mIsConnected = false;
     private SpatialIntersect intersector;
 
-    private boolean debugSagitta = false;
+    private boolean debugSagitta = true;
 
     // Texture rendering related fields.
     // NOTE: Naming indicates which thread is in charge of updating this variable
@@ -1147,7 +1147,7 @@ public class WiFiAugmentedRealityActivity extends Activity
         synchronized (this) {
             try {
 
-                planeFitTransform = doFitPlane(u, v, mRgbTimestampGlThread);
+//                planeFitTransform = doFitPlane(u, v, mRgbTimestampGlThread);
 
             } catch (TangoErrorException e) {
 //                Toast.makeText(getApplicationContext(),
@@ -1167,13 +1167,13 @@ public class WiFiAugmentedRealityActivity extends Activity
             }
         }
 
-        if (planeFitTransform != null) {
-            // Update the position of the rendered cube to the pose of the detected plane
-            // This update is made thread safe by the renderer
-            mRenderer.updateObjectPose(planeFitTransform);
-
-            //mRenderer.setSphereTransform(planeFitTransform);
-        }
+//        if (planeFitTransform != null) {
+//            // Update the position of the rendered cube to the pose of the detected plane
+//            // This update is made thread safe by the renderer
+//            //mRenderer.updateObjectPose(planeFitTransform);
+//
+//            //mRenderer.setSphereTransform(planeFitTransform);
+//        }
 
         try {
             /// area -> camera
@@ -1230,7 +1230,7 @@ public class WiFiAugmentedRealityActivity extends Activity
 
                         float[] depthTOpenGl = depthTarea.matrix;
 
-                        mRenderer.addPeleng(depthTOpenGl);
+                        mRenderer.addPeleng(start, depthTOpenGl);
 
 //                        float[] intersectionPoint = new float[4];
 //                        intersectionPoint[0] = (float) intersectionPointPlaneModelPair.intersectionPoint[0];

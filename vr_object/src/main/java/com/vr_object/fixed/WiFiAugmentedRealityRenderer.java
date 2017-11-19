@@ -114,7 +114,7 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         }
 
         mSagittae.draw(gl10);
-//        mLine.draw();
+        mLine.draw();
     }
 
     /**
@@ -133,6 +133,10 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
     private void initSagitta(float width, float length) {
         OpenGlCylinder cylinder = new OpenGlCylinder(width, length, 8);
         mSagittae.setObject(cylinder);
+
+//        OpenGlCube cube = new OpenGlCube(0.1f);
+        OpenGlSphere sphere = new OpenGlSphere(0.05f, 20, 20);
+        mSagittae.setIntersectObject(sphere);
     }
 
     void setSagittaLength(float length) {
@@ -167,8 +171,24 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         mSagittae.putPose(pose);
     }
 
-    void addPeleng(float[] matrix) {
-        mSagittae.addModelMatrix(matrix);
+    void addPeleng(float[] start, float[] matrix) {
+        mSagittae.addSagittaModelMatrix(matrix);
+        float[] end = calcSagittaEnd(start, matrix);
+
+        mSagittae.intersectSagitta(start, end);
+
+//        mLine.AddLine(start, end);
+    }
+
+    private float[] calcSagittaEnd(float[] start, float[] rotateMatrix) {
+        float[] end = new float[4];
+        System.arraycopy(start, 0, end, 0, 3);
+        end[3] = 0f;
+
+        end[2] += 100f;
+
+        Matrix.multiplyMV(end, 0, rotateMatrix, 0, end, 0);
+        return end;
     }
 
     void clearPelengs() {

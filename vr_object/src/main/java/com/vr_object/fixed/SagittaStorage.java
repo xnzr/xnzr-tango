@@ -1,15 +1,12 @@
 package com.vr_object.fixed;
 
 import android.graphics.Bitmap;
+import android.opengl.Matrix;
 
 import com.google.atap.tangoservice.Tango;
-import com.google.atap.tangoservice.TangoCameraIntrinsics;
-import com.google.atap.tangoservice.TangoPoseData;
-import com.projecttango.tangosupport.TangoSupport;
 import com.vr_object.fixed.xnzrw24b.OpenGlSagitta;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -22,6 +19,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 class SagittaStorage implements OpenGlObject {
     private OpenGlSagitta mSagittaObject;
+    private OpenGlObject mIntersectObject;
     private CopyOnWriteArrayList<float[]> mModelMatrixList = new CopyOnWriteArrayList<>();
 
     private Bitmap mTexture;
@@ -29,10 +27,24 @@ class SagittaStorage implements OpenGlObject {
     private float[] mViewMatrix;
     private float[] mCurPose;
     private Tango mTango;
+    private Intersector intersector = new Intersector(0.1f, 5);
 
     void setSagittaLength(float length) {
         if (mSagittaObject != null) {
             mSagittaObject.setLength(length);
+        }
+    }
+
+    void setIntersectObject(OpenGlObject o) {
+        mIntersectObject = o;
+        if (mTexture != null) {
+            mIntersectObject.setUpProgramsAndBuffers(mTexture);
+        }
+        if (mProjectionMatrix != null) {
+            mIntersectObject.setProjectionMatrix(mProjectionMatrix);
+        }
+        if (mViewMatrix != null) {
+            mIntersectObject.setViewMatrix(mViewMatrix);
         }
     }
 
@@ -51,6 +63,7 @@ class SagittaStorage implements OpenGlObject {
 
     void clearSagittae() {
         mModelMatrixList.clear();
+        intersector.clear();
     }
 
     @Override
@@ -59,12 +72,29 @@ class SagittaStorage implements OpenGlObject {
             mSagittaObject.setModelMatrix(mm);
             mSagittaObject.draw(gl);
         }
+
+        ArrayList<Float[]> cubeCenters = intersector.getIntersection();
+        for (Float[] c: cubeCenters) {
+            drawCube(c, gl);
+        }
+    }
+
+    private void drawCube(Float[] cubeCenterPos, GL10 gl) {
+        float[] modelMatrix = new float[16];
+        Matrix.setIdentityM(modelMatrix, 0);
+        modelMatrix[12] = cubeCenterPos[0];
+        modelMatrix[13] = cubeCenterPos[1];
+        modelMatrix[14] = cubeCenterPos[2];
+
+        mIntersectObject.setModelMatrix(modelMatrix);
+        mIntersectObject.draw(gl);
     }
 
     @Override
     public void setUpProgramsAndBuffers(Bitmap texture) {
         mTexture = texture;
         mSagittaObject.setUpProgramsAndBuffers(texture);
+        mIntersectObject.setUpProgramsAndBuffers(texture);
     }
 
     void putPose(float[] pose) {
@@ -74,37 +104,21 @@ class SagittaStorage implements OpenGlObject {
     public void setTangoService(Tango t) {
         mTango = t;
     }
-    void getPose() {
 
-//        if (mIsFrameAvailableTangoThread.compareAndSet(true, false)) {
-//            // {@code mRgbTimestampGlThread} contains the exact timestamp at
-//            // which the rendered RGB frame was acquired.
-//            double mRgbTimestampGlThread =
-//                    mTango.updateTexture(TangoCameraIntrinsics.
-//                            TANGO_CAMERA_COLOR);
-//
-//            TangoPoseData startPose = TangoSupport.getPoseAtTime(
-//                    mRgbTimestampGlThread,
-//                    TangoPoseData.COORDINATE_FRAME_AREA_DESCRIPTION,
-//                    TangoPoseData.COORDINATE_FRAME_CAMERA_COLOR,
-//                    TangoSupport.TANGO_SUPPORT_ENGINE_OPENGL,
-//                    0);
-//
-//            if (startPose.statusCode == TangoPoseData.POSE_VALID) {
-//
-//                float[] end = new float[4];
-//                float[] start = new float[4];
-//
-//                start[0] = (float) startPose.translation[0];
-//                start[1] = (float) startPose.translation[1];
-//                start[2] = (float) startPose.translation[2];
-//                start[3] = 0.0f;//(float)pose.translation[2];
-//            }
-//        }
+    void addSagittaModelMatrix(float[] modelMatrix) {
+        mModelMatrixList.add(modelMatrix);
     }
 
-    void addModelMatrix(float[] modelMatrix) {
-        mModelMatrixList.add(modelMatrix);
+    void intersectSagitta(float[] start, float[] end) {
+        Float[] s = new Float[start.length];
+        for (int i = 0; i < 3; i++) {
+            s[i] = start[i];
+        }
+        Float[] e = new Float[start.length];
+        for (int i = 0; i < 3; i++) {
+            e[i] = end[i];
+        }
+        intersector.addSagitta(s, e);
     }
 
     @Override
@@ -115,6 +129,7 @@ class SagittaStorage implements OpenGlObject {
     @Override
     public void setProjectionMatrix(float[] projectionMatrix) {
         mSagittaObject.setProjectionMatrix(projectionMatrix);
+        mIntersectObject.setProjectionMatrix(projectionMatrix);
         mProjectionMatrix = new float[projectionMatrix.length];
         System.arraycopy(projectionMatrix, 0, mProjectionMatrix, 0, projectionMatrix.length);
     }
@@ -123,5 +138,6 @@ class SagittaStorage implements OpenGlObject {
     public void setViewMatrix(float[] viewMatrix) {
         mViewMatrix = viewMatrix;
         mSagittaObject.setViewMatrix(viewMatrix);
+        mIntersectObject.setViewMatrix(viewMatrix);
     }
 }

@@ -68,10 +68,10 @@ public class OpenGlCylinder implements OpenGlSagitta {
         // Create texture grid.
         float[] textureGrid = new float[2*2*n];
         for (int i = 0; i < n; i++) {
-            textureGrid[2*i] = (float) 0;
+            textureGrid[2*i] = 0f;
             textureGrid[2*i + 1] = (float) (1/n);
 
-            textureGrid[2*n + 2*i] = (float) 1;
+            textureGrid[2*n + 2*i] = 1f;
             textureGrid[2*n + 2*i + 1] = (float) (1/n);
         }
 

@@ -1,10 +1,14 @@
 package com.vr_object.fixed
 
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
+
 /**
  * Created by Michael Lukin on 14.11.2017.
  */
 
-class Intersector {
+
+class Intersector(private val scale: Float, var showThreshold: Int = 5) {
     data class Coordinate(val x: Int, val y: Int, val z: Int) {
         constructor(array: Array<Int>) : this(array[0], array[1], array[2])
         constructor(array: Array<Float>) : this(Math.round(array[0]), Math.round(array[1]), Math.round(array[2]))
@@ -12,11 +16,18 @@ class Intersector {
         fun toCoordArray(): Array<Float> = arrayOf(x.toFloat(), y.toFloat(), z.toFloat())
     }
 
+    val lock = ReentrantLock()
+
     val space = hashMapOf<Coordinate, Int>()
 
+    fun scaleCoordinate(coord: Array<Float>): Array<Float> =
+            arrayOf(coord[0]*scale, coord[1]*scale, coord[2]*scale, 1f)
+    fun unScaleCoordinate(coord: Array<Float>): Array<Float> =
+            arrayOf(coord[0]/scale, coord[1]/scale, coord[2]/scale, 1f)
+
     fun addSagitta(start: Array<Float>, end: Array<Float>) {
-        val cStart = Coordinate(start)
-        val cEnd = Coordinate(end)
+        val cStart = Coordinate(unScaleCoordinate(start))
+        val cEnd = Coordinate(unScaleCoordinate(end))
 
         val d = arrayOf(Math.abs(cStart.x - cEnd.x), Math.abs(cStart.y - cEnd.y), Math.abs(cStart.z - cEnd.z))
 
@@ -75,11 +86,20 @@ class Intersector {
         var x = getX(start)
         var y = getY(start)
         var z = getZ(start)
+//        addPoint(setXYZ(x, y, z, lengthCoord))
+        var xxxDbg = 0
 
         var errY = d[0] / 2
         var errZ = d[0] / 2
         while (x != getX(end)) {
             addPoint(setXYZ(x, y, z, lengthCoord))
+
+//            if (xxxDbg < 50) {
+//                addPoint(setXYZ(x, y, z, lengthCoord))
+//                xxxDbg++
+//            }
+
+
             x += dx
             errY -= d[1]
             errZ -= d[2]
@@ -97,16 +117,32 @@ class Intersector {
 
 
     private fun addPoint(coord: Coordinate) {
-        var v = space[coord]
-        if (v != null) {
-            v++
-            space[coord] = v.toInt()
-        } else {
-            space[coord] = 1
+        lock.withLock{
+            var v = space[coord]
+            if (v != null) {
+                v++
+                space[coord] = v.toInt()
+            } else {
+                space[coord] = 1
+            }
         }
     }
 
     fun clear() {
-        space.clear()
+        lock.withLock {
+            space.clear()
+        }
+    }
+
+    fun getIntersection():ArrayList<Array<Float>> {
+        val res = ArrayList<Array<Float>>()
+        lock.withLock {
+            for ((coord, counter) in space) {
+                if (counter >= showThreshold) {
+                    res.add(scaleCoordinate(arrayOf(coord.x.toFloat(), coord.y.toFloat(), coord.z.toFloat())))
+                }
+            }
+        }
+        return res
     }
 }
