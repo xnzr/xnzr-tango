@@ -27,7 +27,11 @@ class SagittaStorage implements OpenGlObject {
     private float[] mViewMatrix;
     private float[] mCurPose;
     private Tango mTango;
-    private Intersector intersector = new Intersector(0.1f, 5);
+    private Intersector intersector;
+
+    public SagittaStorage(float scale) {
+        intersector = new Intersector(scale, 5);
+    }
 
     void setSagittaLength(float length) {
         if (mSagittaObject != null) {

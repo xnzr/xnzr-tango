@@ -51,13 +51,14 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
     private Context mContext;
     private OptionsHolder optionsHolder;
     private Tango mTango;
+    private float mScale = 0.4f;
 
     WiFiAugmentedRealityRenderer(Context context, RenderCallback callback) {
         mContext = context;
         mRenderCallback = callback;
         mOpenGlCameraPreview = new OpenGlCameraPreview();
         mSphere = new OpenGlSphere(0.15f, 20, 20);
-        mSagittae = new SagittaStorage();
+        mSagittae = new SagittaStorage(mScale);
         optionsHolder = new OptionsHolder(mContext);
 
         mLine = new WiFiOpenGLLine();
@@ -135,7 +136,7 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         mSagittae.setObject(cylinder);
 
 //        OpenGlCube cube = new OpenGlCube(0.1f);
-        OpenGlSphere sphere = new OpenGlSphere(0.05f, 20, 20);
+        OpenGlSphere sphere = new OpenGlSphere(mScale/2, 20, 20);
         mSagittae.setIntersectObject(sphere);
     }
 

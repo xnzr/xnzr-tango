@@ -109,7 +109,7 @@ public class WiFiAugmentedRealityActivity extends Activity
     private boolean mIsConnected = false;
     private SpatialIntersect intersector;
 
-    private boolean debugSagitta = true;
+    private boolean debugSagitta = false;
 
     // Texture rendering related fields.
     // NOTE: Naming indicates which thread is in charge of updating this variable
