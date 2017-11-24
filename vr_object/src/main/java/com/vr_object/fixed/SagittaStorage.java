@@ -77,7 +77,7 @@ class SagittaStorage implements OpenGlObject {
             mSagittaObject.draw(gl);
         }
 
-        ArrayList<Float[]> cubeCenters = intersector.getIntersection();
+        ArrayList<Float[]> cubeCenters = (ArrayList<Float[]>) intersector.getIntersection();
         for (Float[] c: cubeCenters) {
             drawCube(c, gl);
         }

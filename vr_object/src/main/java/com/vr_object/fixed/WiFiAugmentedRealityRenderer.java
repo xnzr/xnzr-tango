@@ -135,8 +135,9 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         OpenGlCylinder cylinder = new OpenGlCylinder(width, length, 8);
         mSagittae.setObject(cylinder);
 
+        float cubeDiagonalLength = 1.732f*mScale;
 //        OpenGlCube cube = new OpenGlCube(0.1f);
-        OpenGlSphere sphere = new OpenGlSphere(mScale/2, 20, 20);
+        OpenGlSphere sphere = new OpenGlSphere(cubeDiagonalLength/2, 20, 20);
         mSagittae.setIntersectObject(sphere);
     }
 
@@ -168,11 +169,7 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         mLine.setViewMatrix(viewMatrix);
     }
 
-    void putPose(float[] pose) {
-        mSagittae.putPose(pose);
-    }
-
-    void addPeleng(float[] start, float[] matrix) {
+    void addBearing(float[] start, float[] matrix) {
         mSagittae.addSagittaModelMatrix(matrix);
         float[] end = calcSagittaEnd(start, matrix);
 

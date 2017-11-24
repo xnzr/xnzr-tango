@@ -43,6 +43,7 @@ public final class LevelCalculator {
             }
         } else {
             //Console.WriteLine("LevelCalculator.HandleInfo() skip ssid " + data.ssid);
+            return false;
         }
         return needRecalc;
     }
@@ -65,13 +66,7 @@ public final class LevelCalculator {
                 }
                 avgLevels[idx] = sum;
             }
-            //copy-pasted from beacon radar
-            //tfDiff = Math.Pow(10.0, ((double)(ch1rssi - ch0rssi) * 0.1 + 4) * Services.SettingsServices.SettingsService.Instance.PowerAmplifier);
-            //
-            //avgDiff = Math.Abs(avgLevels[0] - avgLevels[1]);
-            //avgDiff = 100 - 4*(avgLevels[0] - avgLevels[1]);
-            avgDiff = Math.pow(10.0, ((double)(avgLevels[1] - avgLevels[0]) * 0.1 + 2.5) * 1);
-            //avgDiff = 2000 / 100 * avgDiff;
+            avgDiff = Math.pow(10.0, (avgLevels[1] - avgLevels[0]) * 0.1 + 2.5);
             needRecalc = false;
         }
         return avgDiff;

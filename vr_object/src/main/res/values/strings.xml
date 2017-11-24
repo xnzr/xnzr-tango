@@ -28,6 +28,6 @@
     <string name="no_sdcard_permission">No permission of writing external storage.</string>
     <string name="permission_denied">Permission denied</string>
     <string name="peleng_tab_head">Dir finder</string>
-    <string name="screen_tab_headd">Screen</string>
+    <string name="screen_tab_head">Screen</string>
     <string name="ghz_notion">GHz</string>
 </resources>

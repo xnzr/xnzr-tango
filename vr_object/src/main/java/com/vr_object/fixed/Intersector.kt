@@ -17,8 +17,8 @@ class Intersector(private val scale: Float, var showThreshold: Int = 5) {
     }
 
     val lock = ReentrantLock()
-
     val space = hashMapOf<Coordinate, Int>()
+    val amountCellsToShow = 3
 
     fun scaleCoordinate(coord: Array<Float>): Array<Float> =
             arrayOf(coord[0]*scale, coord[1]*scale, coord[2]*scale, 1f)
@@ -134,15 +134,17 @@ class Intersector(private val scale: Float, var showThreshold: Int = 5) {
         }
     }
 
-    fun getIntersection():ArrayList<Array<Float>> {
-        val res = ArrayList<Array<Float>>()
+    fun getIntersection(): List<Array<Float>> {
+        val resCandidates = ArrayList<Pair<Array<Float>, Int>>()
         lock.withLock {
             for ((coord, counter) in space) {
                 if (counter >= showThreshold) {
-                    res.add(scaleCoordinate(arrayOf(coord.x.toFloat(), coord.y.toFloat(), coord.z.toFloat())))
+                    resCandidates.add(Pair(scaleCoordinate(arrayOf(coord.x.toFloat(), coord.y.toFloat(), coord.z.toFloat())), counter))
                 }
             }
         }
-        return res
+        resCandidates.sortBy { item -> -item.second }
+        //return arrayListOf(resCandidates[0].first, resCandidates[1].first, resCandidates[2].first)
+        return  resCandidates.subList(0, minOf(amountCellsToShow, resCandidates.size)).map { elem -> elem.first }
     }
 }

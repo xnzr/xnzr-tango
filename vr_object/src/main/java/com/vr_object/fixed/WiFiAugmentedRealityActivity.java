@@ -259,7 +259,7 @@ public class WiFiAugmentedRealityActivity extends Activity
                                 mLevelCalculator.handleInfo(packet);
                                 double level = mLevelCalculator.getAvg();
 
-                                WiFiAugmentedRealityActivity.this.updateLevel(level);
+                                WiFiAugmentedRealityActivity.this.updateLevelDiff(level);
                             }
                         }
                     } catch (WFParseException e) {
@@ -329,10 +329,10 @@ public class WiFiAugmentedRealityActivity extends Activity
         optionsTabbedWindow = (TabHost) findViewById(R.id.options_tab_host);
         optionsTabbedWindow.setup();
 
-        TabHost.TabSpec pelengOptions = optionsTabbedWindow.newTabSpec(getString(R.string.peleng_tab_head));
-        pelengOptions.setContent(R.id.options_peleng_tab);
-        pelengOptions.setIndicator(this.getString(R.string.peleng_tab_head));
-        optionsTabbedWindow.addTab(pelengOptions);
+        TabHost.TabSpec bearingOptions = optionsTabbedWindow.newTabSpec(getString(R.string.peleng_tab_head));
+        bearingOptions.setContent(R.id.options_peleng_tab);
+        bearingOptions.setIndicator(this.getString(R.string.peleng_tab_head));
+        optionsTabbedWindow.addTab(bearingOptions);
 
         TabHost.TabSpec screenOptions = optionsTabbedWindow.newTabSpec(getString(R.string.screen_tab_head));
         screenOptions.setContent(R.id.options_screen_tab);
@@ -340,26 +340,23 @@ public class WiFiAugmentedRealityActivity extends Activity
         optionsTabbedWindow.addTab(screenOptions);
     }
 
-    private void updateLevel(double level) {
-
+    private void updateLevelDiff(double levelDiff) {
         long deltaTime = System.currentTimeMillis() - lastUpdateTime;
-        int progress = (int) Math.floor(100.0 * level);
+        int progress = (int) Math.floor(100.0 * levelDiff);
 
-        String text = String.format("%d (%a)", progress, level);
+        String text = String.format("%d (%a)", progress, levelDiff);
         mTextView.setText(text);
 
         // lines
         if (deltaTime > TIME_PERIOD) {
             if (progress < mThreshold) {
-                AddLine(0.5f, 0.5f);
+                addBearing();
                 numUpdates++;
-//                String text2 = String.format("+ %d (%d)\n", progress, numUpdates);
-//                mTextView2.append(text2);
             }
             lastUpdateTime = System.currentTimeMillis();
         }
 
-        setLevel(level);
+        setLevel(levelDiff);
 
         runOnUiThread(new Runnable() {
             @Override
@@ -1132,49 +1129,13 @@ public class WiFiAugmentedRealityActivity extends Activity
             float u = motionEvent.getX() / view.getWidth();
             float v = motionEvent.getY() / view.getHeight();
 
-            return AddLine(u, v);
+            return addBearing();
         }
         return true;
     }
 
 
-    public boolean AddLine(float u, float v) {
-        float[] planeFitTransform = null;
-
-        // Fit a plane on the clicked point using the latest point cloud data
-        // Synchronize against concurrent access to the RGB timestamp in the OpenGL thread
-        // and a possible service disconnection due to an onPause event.
-        synchronized (this) {
-            try {
-
-//                planeFitTransform = doFitPlane(u, v, mRgbTimestampGlThread);
-
-            } catch (TangoErrorException e) {
-//                Toast.makeText(getApplicationContext(),
-//                        R.string.exception_tango_error,
-//                        Toast.LENGTH_SHORT).show();
-                Log.e(TAG, getString(R.string.exception_tango_error), e);
-            } catch (TangoInvalidException e) {
-//                Toast.makeText(getApplicationContext(),
-//                        R.string.exception_tango_params,
-//                        Toast.LENGTH_SHORT).show();
-                Log.e(TAG, getString(R.string.exception_tango_params), e);
-            } catch (AndroidRuntimeException e) {
-//                Toast.makeText(getApplicationContext(),
-//                        R.string.exception_unknown,
-//                        Toast.LENGTH_SHORT).show();
-                Log.e(TAG, getString(R.string.exception_unknown), e);
-            }
-        }
-
-//        if (planeFitTransform != null) {
-//            // Update the position of the rendered cube to the pose of the detected plane
-//            // This update is made thread safe by the renderer
-//            //mRenderer.updateObjectPose(planeFitTransform);
-//
-//            //mRenderer.setSphereTransform(planeFitTransform);
-//        }
-
+    public boolean addBearing() {
         try {
             /// area -> camera
             TangoPoseData startPose = TangoSupport.getPoseAtTime(
@@ -1192,7 +1153,7 @@ public class WiFiAugmentedRealityActivity extends Activity
                 start[0] = (float) startPose.translation[0];
                 start[1] = (float) startPose.translation[1];
                 start[2] = (float) startPose.translation[2];
-                start[3] = 0.0f;//(float)pose.translation[2];
+                start[3] = 0.0f;
 
                 TangoPointCloudData pointCloud = mPointCloudManager.getLatestPointCloud();
                 if (pointCloud == null) {
@@ -1210,13 +1171,6 @@ public class WiFiAugmentedRealityActivity extends Activity
 
                 if (colorTdepthPose.statusCode == TangoPoseData.POSE_VALID) {
 
-                    // Perform plane fitting with the latest available point cloud data.
-//                    TangoSupport.IntersectionPointPlaneModelPair intersectionPointPlaneModelPair =
-//                            TangoSupport.fitPlaneModelNearPoint(
-//                                    pointCloud,
-//                                    colorTdepthPose,
-//                                    u, v);
-
                     /// from camera_depth to area_description
                     TangoSupport.TangoMatrixTransformData depthTarea =
                             TangoSupport.getMatrixTransformAtTime(pointCloud.timestamp,
@@ -1230,21 +1184,12 @@ public class WiFiAugmentedRealityActivity extends Activity
 
                         float[] depthTOpenGl = depthTarea.matrix;
 
-                        mRenderer.addPeleng(start, depthTOpenGl);
-
-//                        float[] intersectionPoint = new float[4];
-//                        intersectionPoint[0] = (float) intersectionPointPlaneModelPair.intersectionPoint[0];
-//                        intersectionPoint[1] = (float) intersectionPointPlaneModelPair.intersectionPoint[1];
-//                        intersectionPoint[2] = (float) intersectionPointPlaneModelPair.intersectionPoint[2];
-//                        intersectionPoint[3] = 0.0f;//(float)intersectionPointPlaneModelPair.intersectionPoint[3];
-
-//                        Matrix.multiplyMV(end, 0, depthTOpenGl, 0, intersectionPoint, 0);
+                        mRenderer.addBearing(start, depthTOpenGl);
 
                         end[0] += start[0];
                         end[1] += start[1];
                         end[2] += start[2];
 
-//                        intersector.addDot(new double[]{end[0], end[1], end[2]});
                         double[] scoord = intersector.getMaximum();
                         float[] m = new float[16];
                         Matrix.setIdentityM(m, 0);
@@ -1254,10 +1199,7 @@ public class WiFiAugmentedRealityActivity extends Activity
                         m[14] = (float) scoord[2];
 
                         mRenderer.setSphereTransform(m);
-
-
                         mRenderer.setShouldDrawSphere(intersector.isHasMaximum());
-
                         mRenderer.setLinePos(start, end);
                     }
                 }
