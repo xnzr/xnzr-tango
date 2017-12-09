@@ -64,6 +64,7 @@ import com.vr_object.fixed.xnzrw24b.WFPacketCreator;
 import com.vr_object.fixed.xnzrw24b.WFParseException;
 import com.vr_object.fixed.xnzrw24b.data.ChannelInfo;
 import com.vr_object.fixed.xnzrw24b.data.ChannelsWiFi;
+import com.vr_object.fixed.xnzrw24b.data.GlobalSettings;
 import com.vr_object.fixed.xnzrw24b.data.NetworkInfo;
 import com.vr_object.screencast.ScreenRecorderService;
 
@@ -1129,7 +1130,7 @@ public class WiFiAugmentedRealityActivity extends Activity
             float u = motionEvent.getX() / view.getWidth();
             float v = motionEvent.getY() / view.getHeight();
 
-            return addBearing();
+            //return addBearing();
         }
         return true;
     }
@@ -1157,7 +1158,7 @@ public class WiFiAugmentedRealityActivity extends Activity
 
                 TangoPointCloudData pointCloud = mPointCloudManager.getLatestPointCloud();
                 if (pointCloud == null) {
-                    return true; ///???
+                    return false; ///???
                 }
 
                 // We need to calculate the transform between the color camera at the
@@ -1201,6 +1202,7 @@ public class WiFiAugmentedRealityActivity extends Activity
                         mRenderer.setSphereTransform(m);
                         mRenderer.setShouldDrawSphere(intersector.isHasMaximum());
                         mRenderer.setLinePos(start, end);
+                        return true;
                     }
                 }
             }
@@ -1226,7 +1228,7 @@ public class WiFiAugmentedRealityActivity extends Activity
                     Toast.LENGTH_SHORT).show();
             Log.e(TAG, getString(R.string.failed_permissions), e);
         }
-        return true;
+        return false;
     }
 
     ///usb
@@ -1371,11 +1373,20 @@ public class WiFiAugmentedRealityActivity extends Activity
 
     private void changeChannel(int chan) {
         Log.d(TAG, "changeChannel ");
-        setChan = chan;
+
+        switch (GlobalSettings.getMode()) {
+            case WIFI:
+                setChan = chan;
+                break;
+            case BLE:
+                setChan = 1;
+                break;
+        }
+
         if (port != null) {
             try {
-                if (chan > 0) {
-                    port.write(getChannelChar(chan), READ_TIMEOUT_MS);
+                if (setChan > 0) {
+                    port.write(getChannelChar(setChan), READ_TIMEOUT_MS);
                 } else {
                     port.write(getChannelChar(curChan), READ_TIMEOUT_MS);
                     setChan = curChan;

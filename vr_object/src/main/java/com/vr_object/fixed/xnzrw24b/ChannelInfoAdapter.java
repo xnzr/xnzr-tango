@@ -1,6 +1,5 @@
 package com.vr_object.fixed.xnzrw24b;
 
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +10,7 @@ import android.widget.TextView;
 import com.vr_object.fixed.R;
 import com.vr_object.fixed.xnzrw24b.ChannelInfoFragment.OnListFragmentInteractionListener;
 import com.vr_object.fixed.xnzrw24b.data.ChannelInfo;
+import com.vr_object.fixed.xnzrw24b.data.GlobalSettings;
 
 import java.util.List;
 
@@ -52,7 +52,15 @@ public class ChannelInfoAdapter extends RecyclerView.Adapter<ChannelInfoAdapter.
 
         if(mSelectedPosition == position) {
             // Here I am just highlighting the background
-            holder.itemView.setBackgroundColor(Color.argb(80, 0, 200, 0));
+            switch (GlobalSettings.getMode()) {
+                case WIFI:
+                    holder.itemView.setBackgroundColor(Color.argb(80, 0, 200, 0));
+                    break;
+                case BLE:
+                    holder.itemView.setBackgroundColor(Color.argb(80, 0x1D, 0xB3, 0xE7));
+                    break;
+            }
+
         } else {
 //            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
             holder.itemView.setBackgroundColor(Color.argb(70, 200, 200, 200));

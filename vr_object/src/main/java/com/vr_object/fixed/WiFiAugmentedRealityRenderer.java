@@ -19,6 +19,7 @@ import javax.microedition.khronos.opengles.GL10;
  */
 class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
     private static final String TAG = WiFiAugmentedRealityRenderer.class.getSimpleName();
+    public static final float BEARING_LENGTH = 100f;
 
     private float[] mObjectTransform = null;
     private boolean mObjectPoseUpdated = false;
@@ -182,8 +183,7 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         float[] end = new float[4];
         System.arraycopy(start, 0, end, 0, 3);
         end[3] = 0f;
-
-        end[2] += 100f;
+        end[2] += BEARING_LENGTH;
 
         Matrix.multiplyMV(end, 0, rotateMatrix, 0, end, 0);
         return end;

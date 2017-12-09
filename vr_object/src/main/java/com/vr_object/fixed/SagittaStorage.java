@@ -30,7 +30,7 @@ class SagittaStorage implements OpenGlObject {
     private Intersector intersector;
 
     public SagittaStorage(float scale) {
-        intersector = new Intersector(scale, 5);
+        intersector = new Intersector(scale, 4);
     }
 
     void setSagittaLength(float length) {

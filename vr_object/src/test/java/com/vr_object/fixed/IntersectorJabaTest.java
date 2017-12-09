@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 public class IntersectorJabaTest {
     @Test
     public void testAddSagittaX01() {
-        Intersector intersector = new Intersector();
+        Intersector intersector = new Intersector(0.4f, 5);
         intersector.addSagitta(new Float[]{0f, 0f, 0f}, new Float[]{2f, 0f, 0f});
 
         HashMap space = intersector.getSpace();
@@ -31,7 +31,7 @@ public class IntersectorJabaTest {
 
     @Test
     public void testAddSagittaX02() {
-        Intersector intersector = new Intersector();
+        Intersector intersector = new Intersector(0.4f, 5);
         intersector.addSagitta(new Float[]{0f, 0f, 0f}, new Float[]{3f, 1f, 0f});
 
         HashMap space = intersector.getSpace();
@@ -53,7 +53,7 @@ public class IntersectorJabaTest {
 
     @Test
     public void testAddSagittaY02() {
-        Intersector intersector = new Intersector();
+        Intersector intersector = new Intersector(0.4f, 5);
         intersector.addSagitta(new Float[]{0f, 0f, 0f}, new Float[]{1f, 3f, 0f});
 
         HashMap space = intersector.getSpace();
@@ -74,7 +74,7 @@ public class IntersectorJabaTest {
 
     @Test
     public void testAddSagittaZ02() {
-        Intersector intersector = new Intersector();
+        Intersector intersector = new Intersector(0.4f, 5);
         intersector.addSagitta(new Float[]{0f, 0f, 0f}, new Float[]{1f, 0f, 3f});
 
         HashMap space = intersector.getSpace();

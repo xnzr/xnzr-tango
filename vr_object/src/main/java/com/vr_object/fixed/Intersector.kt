@@ -86,19 +86,10 @@ class Intersector(private val scale: Float, var showThreshold: Int = 5) {
         var x = getX(start)
         var y = getY(start)
         var z = getZ(start)
-//        addPoint(setXYZ(x, y, z, lengthCoord))
-        var xxxDbg = 0
 
         var errY = d[0] / 2
         var errZ = d[0] / 2
         while (x != getX(end)) {
-            addPoint(setXYZ(x, y, z, lengthCoord))
-
-//            if (xxxDbg < 50) {
-//                addPoint(setXYZ(x, y, z, lengthCoord))
-//                xxxDbg++
-//            }
-
 
             x += dx
             errY -= d[1]
@@ -111,6 +102,8 @@ class Intersector(private val scale: Float, var showThreshold: Int = 5) {
                 z += dz
                 errZ += d[0]
             }
+
+            addPoint(setXYZ(x, y, z, lengthCoord)) //We do not want to add the first cube
         }
         addPoint(setXYZ(x, y, z, lengthCoord))
     }
@@ -144,7 +137,6 @@ class Intersector(private val scale: Float, var showThreshold: Int = 5) {
             }
         }
         resCandidates.sortBy { item -> -item.second }
-        //return arrayListOf(resCandidates[0].first, resCandidates[1].first, resCandidates[2].first)
         return  resCandidates.subList(0, minOf(amountCellsToShow, resCandidates.size)).map { elem -> elem.first }
     }
 }

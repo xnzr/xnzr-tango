@@ -12,7 +12,7 @@ import java.util.LinkedList;
 public final class LevelCalculator {
     private String ssid;
     private String mac;
-    private int avgCount = 15;
+    private final int AVG_COUNT = 15;
     private double[] avgLevels = new double[2];
     private double avgDiff = 0.0;
     private boolean needRecalc = true;
@@ -33,7 +33,7 @@ public final class LevelCalculator {
             int idx = data.antIdx;
             if (0 <= idx && idx <= 1) {
                 mLevels.get(idx).addLast(data.power);
-                while (mLevels.get(idx).size() > avgCount) {
+                while (mLevels.get(idx).size() > AVG_COUNT) {
                     mLevels.get(idx).removeFirst();
                 }
                 needRecalc = true;

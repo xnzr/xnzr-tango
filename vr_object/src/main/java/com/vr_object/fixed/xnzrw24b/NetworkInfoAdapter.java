@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.vr_object.fixed.R;
 import com.vr_object.fixed.xnzrw24b.NetworkInfoFragment.OnListFragmentInteractionListener;
+import com.vr_object.fixed.xnzrw24b.data.GlobalSettings;
 import com.vr_object.fixed.xnzrw24b.data.NetworkInfo;
 
 import java.util.List;
@@ -47,7 +48,14 @@ public class NetworkInfoAdapter extends RecyclerView.Adapter<NetworkInfoAdapter.
 
         if(mSelectedPosition == position) {
             // Here I am just highlighting the background
-            holder.itemView.setBackgroundColor(Color.argb(80, 0, 200, 0));
+            switch (GlobalSettings.getMode()) {
+                case WIFI:
+                    holder.itemView.setBackgroundColor(Color.argb(80, 0, 200, 0));
+                    break;
+                case BLE:
+                    holder.itemView.setBackgroundColor(Color.argb(80, 0x1D, 0xB3, 0xE7));
+                    break;
+            }
         } else {
 //            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
             holder.itemView.setBackgroundColor(Color.argb(70, 200, 200, 200));
