@@ -1,5 +1,7 @@
 package com.vr_object.fixed.xnzrw24b;
 
+import com.vr_object.fixed.xnzrw24b.data.NamesBLE;
+
 /**
  * Created by alexe on 10.01.2017.
  */
@@ -11,6 +13,7 @@ public final class BeaconInfoData {
     public long time;
     public double level;
     public String ssid;
+    public String bleName = "";
 
     @Override
     public String toString() {
@@ -44,6 +47,10 @@ public final class BeaconInfoData {
             {
                 info.ssid += " ";
                 info.ssid += subStrings[i];
+            }
+
+            if (NamesBLE.getData().containsKey(info.mac)) {
+                info.bleName = NamesBLE.getData().get(info.mac);
             }
         }
         catch (Exception e) {

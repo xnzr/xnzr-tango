@@ -26,6 +26,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -49,6 +50,7 @@ import com.google.atap.tangoservice.TangoPoseData;
 import com.google.atap.tangoservice.TangoXyzIjData;
 import com.projecttango.tangosupport.TangoPointCloudManager;
 import com.projecttango.tangosupport.TangoSupport;
+import com.vr_object.firebase.DatabaseProxy;
 import com.vr_object.fixed.xnzrw24b.AimView;
 import com.vr_object.fixed.xnzrw24b.ChannelInfoFragment;
 import com.vr_object.fixed.xnzrw24b.DeviceNotFoundException;
@@ -59,7 +61,7 @@ import com.vr_object.fixed.xnzrw24b.MessageFields;
 import com.vr_object.fixed.xnzrw24b.NetworkInfoFragment;
 import com.vr_object.fixed.xnzrw24b.SpatialIntersect;
 import com.vr_object.fixed.xnzrw24b.UsbSerialPortTi;
-import com.vr_object.fixed.xnzrw24b.WFPacket;
+import com.vr_object.fixed.xnzrw24b.PacketFromDevice;
 import com.vr_object.fixed.xnzrw24b.WFPacketCreator;
 import com.vr_object.fixed.xnzrw24b.WFParseException;
 import com.vr_object.fixed.xnzrw24b.data.ChannelInfo;
@@ -111,6 +113,8 @@ public class WiFiAugmentedRealityActivity extends Activity
     private SpatialIntersect intersector;
 
     private boolean debugSagitta = false;
+
+    private DatabaseProxy firebaseProxy = new DatabaseProxy();
 
     // Texture rendering related fields.
     // NOTE: Naming indicates which thread is in charge of updating this variable
@@ -206,6 +210,8 @@ public class WiFiAugmentedRealityActivity extends Activity
         mSurfaceView = (GLSurfaceView) findViewById(R.id.surfaceview);
         setupRenderer();
 
+        firebaseProxy.CreateConnection();
+
         mSurfaceView.setOnTouchListener(this);
 
         //progress bar
@@ -251,7 +257,7 @@ public class WiFiAugmentedRealityActivity extends Activity
                 if (msg.what == MessageFields.CODE_DATA) {
                     Log.d(TAG, "ant=" + msg.getData().getInt(MessageFields.FIELD_ANT_INT) + " ch=" + msg.getData().getInt(MessageFields.FIELD_CH_INT) + " ssid=" + msg.getData().getString(MessageFields.FIELD_SSID_STR) + " mac=" + msg.getData().getString(MessageFields.FIELD_MAC_STR) + " rssi=" + msg.getData().getDouble(MessageFields.FIELD_RSSI_DOUBLE));
                     try {
-                        WFPacket packet = new WFPacket(msg.getData().getString(MessageFields.FIELD_RAW_STR));
+                        PacketFromDevice packet = new PacketFromDevice(msg.getData().getString(MessageFields.FIELD_RAW_STR));
                         networksFragment.addInfo(packet);
                         if (mSelectedNetwork != null && mSelectedNetwork.Ssid.equals(packet.apName) && mSelectedNetwork.Mac.equals(packet.mac)) {
                             mChannelsFragment.addInfo(packet);
@@ -1013,6 +1019,19 @@ public class WiFiAugmentedRealityActivity extends Activity
         clearRadius();
     }
 
+    public void showCreateBleButton(final boolean show) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (show) {
+                    findViewById(R.id.b_create_ble_name).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.b_create_ble_name).setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
     public void showOptions(View view) {
         loadOptions();
         findViewById(options_scroll_view).setVisibility(View.VISIBLE);
@@ -1123,6 +1142,23 @@ public class WiFiAugmentedRealityActivity extends Activity
         sound.setChecked(soundOn);
     }
 
+    public void showNameBlePanel(View view) {
+        findViewById(R.id.create_ble_name_panel).setVisibility(View.VISIBLE);
+    }
+
+    public void closeNameBlePanel(View view) {
+        findViewById(R.id.create_ble_name_panel).setVisibility(View.GONE);
+    }
+
+    public void saveBleName(View view) {
+        findViewById(R.id.create_ble_name_panel).setVisibility(View.GONE);
+
+        String name = ((EditText)findViewById(R.id.et_ble_name)).getText().toString();
+        mSelectedNetwork.BleName = name;
+
+        firebaseProxy.PushData(mSelectedNetwork.Mac, name);
+    }
+
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if (motionEvent.getAction() == MotionEvent.ACTION_UP && debugSagitta) {
@@ -1130,7 +1166,7 @@ public class WiFiAugmentedRealityActivity extends Activity
             float u = motionEvent.getX() / view.getWidth();
             float v = motionEvent.getY() / view.getHeight();
 
-            //return addBearing();
+            return addBearing();
         }
         return true;
     }
@@ -1262,6 +1298,7 @@ public class WiFiAugmentedRealityActivity extends Activity
         while (!inited && !Thread.currentThread().isInterrupted()) {
             try {
                 port.init();
+                showCreateBleButton(GlobalSettings.getMode() == GlobalSettings.WorkMode.BLE);
                 //sending to enable old protocol CODE=2122239
                 String cmd = "$2122239";
                 byte[] cmdBytes = new byte[cmd.length()];
@@ -1329,12 +1366,12 @@ public class WiFiAugmentedRealityActivity extends Activity
 
 
             wfCreator.putData(buf, read);
-            ArrayList<WFPacket> packets = wfCreator.getPackets();
+            ArrayList<PacketFromDevice> packets = wfCreator.getPackets();
             //Log.d(TAG, "Have " + packets.size() + " wfifi packets" );
 
             if (packets.size() > 0) {
                 //TODO: Send packets
-                for (WFPacket p : packets) {
+                for (PacketFromDevice p : packets) {
                     sendInfo(p.toString());
                     sendData(p);
                 }
@@ -1469,7 +1506,7 @@ public class WiFiAugmentedRealityActivity extends Activity
         handler.sendMessage(message);
     }
 
-    private void sendData(WFPacket packet) {
+    private void sendData(PacketFromDevice packet) {
         Message message = handler.obtainMessage(MessageFields.CODE_DATA);
         //intent.setAction(ServiceConstants.ACTION_NAME);
         message.getData().putInt(MessageFields.FIELD_CODE_INT, MessageFields.CODE_DATA);

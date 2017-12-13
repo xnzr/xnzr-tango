@@ -84,6 +84,15 @@
             android:src="@drawable/icon_restart_128"
             android:scaleType="fitEnd" />
 
+        <ImageButton
+            android:id="@+id/b_create_ble_name"
+            android:onClick="showNameBlePanel"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="gone"
+            android:src="@drawable/icon_save_128"
+            android:scaleType="fitEnd"/>
+
     </LinearLayout>
 
     <FrameLayout
@@ -292,6 +301,59 @@
             </LinearLayout>
         </LinearLayout>
 
+
+    </ScrollView>
+
+    <ScrollView
+        android:id="@+id/create_ble_name_panel"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:foregroundGravity="center"
+        android:background="@color/options_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:text="Enter name for BLE device"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/et_ble_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_margin="@dimen/options_group_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/b_save_ble_name"
+                    android:onClick="saveBleName"
+                    android:layout_weight="0.3"
+                    android:text="@string/save_options_text"
+                    android:layout_gravity="start|bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:onClick="closeNameBlePanel"
+                    android:text="@string/close_options_text"
+                    android:layout_weight="0.3"
+                    android:layout_gravity="end|bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </ScrollView>
 

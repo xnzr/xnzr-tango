@@ -14,9 +14,9 @@ public class WFPacketCreator {
     private final byte terminator1 = 13;
     private final byte terminator2 = 10;
 
-    public ArrayList<WFPacket> getPackets() {
+    public ArrayList<PacketFromDevice> getPackets() {
 
-        ArrayList<WFPacket> packets = new ArrayList<>();
+        ArrayList<PacketFromDevice> packets = new ArrayList<>();
 
         int termPos1 = 0, termPos2 = 0;
 
@@ -28,7 +28,7 @@ public class WFPacketCreator {
                 String packetString = buffer.substring(0, termPos2).trim();
                 buffer = buffer.substring(termPos2 + 1);
                 try {
-                    packets.add(new WFPacket(packetString));
+                    packets.add(new PacketFromDevice(packetString));
                 } catch (WFParseException e) {
                     e.printStackTrace();
                 }

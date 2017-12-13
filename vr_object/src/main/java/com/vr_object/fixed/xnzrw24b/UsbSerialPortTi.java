@@ -87,7 +87,8 @@ public class UsbSerialPortTi {
                 device = usbDevice;
 
                 //Only while BLE and Wi-Fi devices have same productId!
-                GlobalSettings.setMode(GlobalSettings.WorkMode.WIFI);
+//                GlobalSettings.setMode(GlobalSettings.WorkMode.WIFI);
+                GlobalSettings.setMode(GlobalSettings.WorkMode.BLE);
                 return;
             }
 

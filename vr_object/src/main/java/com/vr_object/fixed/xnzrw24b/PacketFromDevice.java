@@ -1,6 +1,9 @@
 package com.vr_object.fixed.xnzrw24b;
 
-public class WFPacket {
+import com.vr_object.fixed.xnzrw24b.data.GlobalSettings;
+import com.vr_object.fixed.xnzrw24b.data.NamesBLE;
+
+public class PacketFromDevice {
 
     public int antIdx = 0;
     public int wifiCh = 0;
@@ -9,13 +12,14 @@ public class WFPacket {
     public String mac = "";
     public long time = 0;
     public String raw;
+    public String bleName = "";
 
-    private static final String TAG = WFPacket.class.getSimpleName();
+    private static final String TAG = PacketFromDevice.class.getSimpleName();
 
     private final String delimeters = "[ ]+";
 
 
-    public WFPacket( String str ) throws WFParseException {
+    public PacketFromDevice(String str ) throws WFParseException {
         String[] tokens = str.split(delimeters);
 
         if ( tokens.length < 6 ) {
@@ -32,6 +36,12 @@ public class WFPacket {
             apName += tokens[i];
             if ( i != tokens.length - 1 ) {
                 apName += " ";
+            }
+        }
+
+        if (GlobalSettings.getMode() == GlobalSettings.WorkMode.BLE) {
+            if (NamesBLE.getData().containsKey(mac)) {
+                bleName = NamesBLE.getData().get(mac);
             }
         }
 

@@ -13,6 +13,8 @@ import com.vr_object.fixed.xnzrw24b.data.GlobalSettings;
 import com.vr_object.fixed.xnzrw24b.data.NetworkInfo;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link NetworkInfo} and makes a call to the
@@ -25,6 +27,7 @@ public class NetworkInfoAdapter extends RecyclerView.Adapter<NetworkInfoAdapter.
     private final OnListFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
     private int mSelectedPosition = -1;
+    private CopyOnWriteArrayList<ViewHolder> mViewHolders = new CopyOnWriteArrayList<>();
 
     public NetworkInfoAdapter(RecyclerView recyclerView, List<NetworkInfo> items, OnListFragmentInteractionListener listener) {
         mRecyclerView = recyclerView;
@@ -32,19 +35,59 @@ public class NetworkInfoAdapter extends RecyclerView.Adapter<NetworkInfoAdapter.
         mListener = listener;
     }
 
+    public void updateNameBLE(String mac, String name) {
+        if (GlobalSettings.getMode() != GlobalSettings.WorkMode.BLE) {
+            return;
+        }
+
+        if (name == null) {
+            return;
+        }
+
+        if (name.trim().equals("")) {
+            return;
+        }
+
+        for (ViewHolder wh: mViewHolders) {
+            if (wh.mSsidView.getText().equals(mac)) { //This means that BLE is unnamed
+                wh.mSsidView.setText(name);
+                wh.mMacView.setText(mac);
+            }
+        }
+    }
+
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_networkinfo, parent,  false);
 
-        return new ViewHolder(view);
+        ViewHolder wh = new ViewHolder(view);
+        mViewHolders.add(wh);
+        return wh;
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mSsidView.setText(mValues.get(position).Ssid);
-        holder.mMacView.setText(mValues.get(position).Mac);
+
+        switch (GlobalSettings.getMode()) {
+            case WIFI:
+                holder.mSsidView.setText(mValues.get(position).Ssid);
+                holder.mMacView.setText(mValues.get(position).Mac);
+                break;
+            case BLE:
+                //TODO: rename mSsidView and mMacView
+                if (Objects.equals(holder.mItem.BleName, "") || holder.mItem.BleName == null) {
+                    holder.mSsidView.setText(holder.mItem.Mac);
+                    holder.mMacView.setText(holder.mItem.Ssid);
+                } else {
+                    holder.mSsidView.setText(holder.mItem.BleName);
+                    holder.mMacView.setText(holder.mItem.Mac);
+                }
+                break;
+        }
+
 
         if(mSelectedPosition == position) {
             // Here I am just highlighting the background

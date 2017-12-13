@@ -56,7 +56,7 @@ public class ChannelInfoFragment extends Fragment {
         mAdapter.notifyDataSetChanged();
     }
 
-    public void addInfo(WFPacket packet) {
+    public void addInfo(PacketFromDevice packet) {
         for (int i = 0; i < mChannels.size(); ++i) {
             if (mChannels.get(i).Channel == packet.wifiCh) {
                 mAdapter.notifyItemChanged(i);

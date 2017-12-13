@@ -1,7 +1,7 @@
 package com.vr_object.fixed.xnzrw24b.data;
 
 import com.vr_object.fixed.xnzrw24b.BeaconInfoData;
-import com.vr_object.fixed.xnzrw24b.WFPacket;
+import com.vr_object.fixed.xnzrw24b.PacketFromDevice;
 
 import java.util.ArrayList;
 
@@ -13,19 +13,22 @@ public final class NetworkInfo {
     public NetworkInfo(BeaconInfoData info) {
         Ssid = info.ssid;
         Mac = info.mac;
+        BleName = info.bleName;
     }
 
-    public NetworkInfo(WFPacket info) {
+    public NetworkInfo(PacketFromDevice info) {
         Ssid = info.apName;
         Mac = info.mac;
+        BleName = info.bleName;
     }
 
     public String Ssid;
     public String Mac;
+    public String BleName = "";
 
     public ArrayList<ChannelInfo> Channels = new ArrayList<ChannelInfo>();
 
-    public boolean addChannel(WFPacket packet) {
+    public boolean addChannel(PacketFromDevice packet) {
         boolean result = false;
         ChannelInfo chan = null;
 

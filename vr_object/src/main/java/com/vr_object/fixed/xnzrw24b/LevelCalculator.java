@@ -2,6 +2,8 @@ package com.vr_object.fixed.xnzrw24b;
 
 import android.util.Log;
 
+import com.vr_object.fixed.xnzrw24b.data.GlobalSettings;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -12,7 +14,8 @@ import java.util.LinkedList;
 public final class LevelCalculator {
     private String ssid;
     private String mac;
-    private final int AVG_COUNT = 15;
+    private final int AVG_COUNT_WIFI = 15;
+    private final int AVG_COUNT_BLE = 5;
     private double[] avgLevels = new double[2];
     private double avgDiff = 0.0;
     private boolean needRecalc = true;
@@ -27,13 +30,23 @@ public final class LevelCalculator {
         mLevels.add(new LinkedList<Double>());
     }
 
-    public boolean handleInfo(WFPacket data)
+    public boolean handleInfo(PacketFromDevice data)
     {
         if (data.apName.equals(ssid) && data.mac.equals(mac)) {
             int idx = data.antIdx;
             if (0 <= idx && idx <= 1) {
+                int avg_count = AVG_COUNT_WIFI;
+                switch (GlobalSettings.getMode()) {
+                    case WIFI:
+                        avg_count = AVG_COUNT_WIFI;
+                        break;
+                    case BLE:
+                        avg_count = AVG_COUNT_BLE;
+                        break;
+                }
+
                 mLevels.get(idx).addLast(data.power);
-                while (mLevels.get(idx).size() > AVG_COUNT) {
+                while (mLevels.get(idx).size() > avg_count) {
                     mLevels.get(idx).removeFirst();
                 }
                 needRecalc = true;

@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.vr_object.fixed.R;
+import com.vr_object.fixed.xnzrw24b.data.GlobalSettings;
+import com.vr_object.fixed.xnzrw24b.data.NamesBLE;
 import com.vr_object.fixed.xnzrw24b.data.NetworkInfo;
 
 import java.util.ArrayList;
@@ -45,12 +47,23 @@ public class NetworkInfoFragment extends Fragment {
         return fragment;
     }
 
-    public void addInfo(WFPacket packet) {
+    public void addInfo(PacketFromDevice packet) {
         NetworkInfo networkInfo = null;
-        for (NetworkInfo netInfo: networks) {
-            if (netInfo.Ssid.equals(packet.apName) && netInfo.Mac.equals(packet.mac)) {
-                networkInfo = netInfo;
-            }
+        switch (GlobalSettings.getMode()) {
+            case WIFI:
+                for (NetworkInfo netInfo: networks) {
+                    if (netInfo.Ssid.equals(packet.apName) && netInfo.Mac.equals(packet.mac)) {
+                        networkInfo = netInfo;
+                    }
+                }
+                break;
+            case BLE:
+                for (NetworkInfo netInfo: networks) {
+                    if (netInfo.Mac.equals(packet.mac)) {
+                        networkInfo = netInfo;
+                    }
+                }
+                break;
         }
 
         if (networkInfo == null) {
@@ -58,6 +71,15 @@ public class NetworkInfoFragment extends Fragment {
             networks.add(networkInfo);
             mAdapter.notifyDataSetChanged();
         }
+
+        if (GlobalSettings.getMode() == GlobalSettings.WorkMode.BLE) {
+            if (NamesBLE.getData().containsKey(networkInfo.Mac)) {
+                networkInfo.BleName = NamesBLE.getData().get(networkInfo.Mac);
+            }
+        }
+        mAdapter.updateNameBLE(packet.mac, packet.bleName);
+
+        //TODO: here we should update channel list for selected network
         networkInfo.addChannel(packet);
     }
 
