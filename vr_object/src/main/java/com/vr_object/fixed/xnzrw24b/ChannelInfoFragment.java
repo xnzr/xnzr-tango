@@ -1,10 +1,11 @@
 package com.vr_object.fixed.xnzrw24b;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import java.util.List;
  * interface.
  */
 public class ChannelInfoFragment extends Fragment {
+    private final String TAG = this.getClass().getName();
 
     // TODO: Customize parameters
     private OnListFragmentInteractionListener mListener;
@@ -36,6 +38,7 @@ public class ChannelInfoFragment extends Fragment {
 
     private List<ChannelInfo> mChannels = new ArrayList<>();
     private ChannelInfoAdapter mAdapter;
+    NetworkInfo mInfo;
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
@@ -48,21 +51,37 @@ public class ChannelInfoFragment extends Fragment {
     }
 
     public void setNetwork(NetworkInfo info) {
+        mInfo = info;
         mAdapter.clearSelection();
         mChannels.clear();
-        for (ChannelInfo chan: info.Channels) {
-            mChannels.add(chan);
-        }
+        mChannels.addAll(info.Channels);
         mAdapter.notifyDataSetChanged();
     }
 
     public void addInfo(PacketFromDevice packet) {
+        boolean found = false;
         for (int i = 0; i < mChannels.size(); ++i) {
             if (mChannels.get(i).Channel == packet.wifiCh) {
                 mAdapter.notifyItemChanged(i);
+                found = true;
                 break;
             }
         }
+        if (!found) {
+            Log.d(TAG, "addInfo: packet not found!");
+            ChannelInfo newChannel = null;
+            for (ChannelInfo c: mInfo.Channels) {
+                if (c.Channel == packet.wifiCh) {
+                    newChannel = c;
+                }
+            }
+            if (newChannel != null) {
+                mChannels.add(newChannel);
+            } else {
+                Log.w(TAG, "addInfo: packet was lost!!!!");
+            }
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     public void clearList() {

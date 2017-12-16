@@ -66,6 +66,11 @@ public final class LevelCalculator {
         Log.d(TAG, String.format("\r                                                          \rLEVEL: %5.2f       rssi: %6.2f  %6.2f", diff, avgLevels[0], avgLevels[1]));
     }
 
+    public double getAvgAnt0() {
+        getAvg();
+        return avgLevels[0];
+    }
+
     public double getAvg() {
         if (needRecalc) {
             for (int idx = 0; idx < 2; idx++) {

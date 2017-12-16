@@ -59,9 +59,9 @@ import com.vr_object.fixed.xnzrw24b.ItsPacketCreator;
 import com.vr_object.fixed.xnzrw24b.LevelCalculator;
 import com.vr_object.fixed.xnzrw24b.MessageFields;
 import com.vr_object.fixed.xnzrw24b.NetworkInfoFragment;
+import com.vr_object.fixed.xnzrw24b.PacketFromDevice;
 import com.vr_object.fixed.xnzrw24b.SpatialIntersect;
 import com.vr_object.fixed.xnzrw24b.UsbSerialPortTi;
-import com.vr_object.fixed.xnzrw24b.PacketFromDevice;
 import com.vr_object.fixed.xnzrw24b.WFPacketCreator;
 import com.vr_object.fixed.xnzrw24b.WFParseException;
 import com.vr_object.fixed.xnzrw24b.data.ChannelInfo;
@@ -82,6 +82,7 @@ import static com.vr_object.fixed.R.id.b_on_off_circle;
 import static com.vr_object.fixed.R.id.b_on_off_sound;
 import static com.vr_object.fixed.R.id.b_start_recording;
 import static com.vr_object.fixed.R.id.b_stop_recording;
+import static com.vr_object.fixed.R.id.b_wifi_ble_switch;
 import static com.vr_object.fixed.R.id.circle_container;
 import static com.vr_object.fixed.R.id.options_scroll_view;
 import static com.vr_object.fixed.R.id.sagittae_length_setter;
@@ -99,6 +100,8 @@ public class WiFiAugmentedRealityActivity extends Activity
     private static final int REQUEST_CODE_SCREEN_CAPTURE = 1;
     private static final int EXTERNAL_STORAGE_REQUEST_CODE = 2;
     private static final int RECORD_AUDIO_REQUEST_CODE = 2;
+    public static final int MAX_PROGRESS_RSSI = -40;
+    public static final int MIN_PROGRESS_RSSI = -100;
     private MyBroadcastReceiver mReceiver;
 
     private TextView mTextView;
@@ -216,7 +219,7 @@ public class WiFiAugmentedRealityActivity extends Activity
 
         //progress bar
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        mProgressBar.setMax(10000);
+        mProgressBar.setMax(MAX_PROGRESS_RSSI - MIN_PROGRESS_RSSI);
         lastUpdateTime = System.currentTimeMillis();
 
         mTextView = (TextView) findViewById(R.id.textView);
@@ -267,6 +270,7 @@ public class WiFiAugmentedRealityActivity extends Activity
                                 double level = mLevelCalculator.getAvg();
 
                                 WiFiAugmentedRealityActivity.this.updateLevelDiff(level);
+                                WiFiAugmentedRealityActivity.this.updateLevelProgress(mLevelCalculator.getAvgAnt0());
                             }
                         }
                     } catch (WFParseException e) {
@@ -347,6 +351,17 @@ public class WiFiAugmentedRealityActivity extends Activity
         optionsTabbedWindow.addTab(screenOptions);
     }
 
+    private void updateLevelProgress(final double level) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                double pLevel = Math.min(level, MAX_PROGRESS_RSSI);
+                int progress = (int)(pLevel - MIN_PROGRESS_RSSI);
+                mProgressBar.setProgress(progress);
+            }
+        });
+    }
+
     private void updateLevelDiff(double levelDiff) {
         long deltaTime = System.currentTimeMillis() - lastUpdateTime;
         int progress = (int) Math.floor(100.0 * levelDiff);
@@ -372,9 +387,6 @@ public class WiFiAugmentedRealityActivity extends Activity
             }
         });
 
-        //update progress bar
-        int tmp = Math.abs(mProgressBar.getMax() - Math.min(progress, mProgressBar.getMax()));
-        mProgressBar.setProgress(tmp);
     }
 
     public void setLevel(double level) {
@@ -1089,6 +1101,11 @@ public class WiFiAugmentedRealityActivity extends Activity
         boolean soundState = sound.isChecked();
         optionsHolder.saveSoundState(soundState);
         setSoundState(soundState);
+
+        Switch wifi_ble_switch = (Switch) findViewById(b_wifi_ble_switch);
+        boolean wifi_ble = wifi_ble_switch.isChecked();
+        optionsHolder.saveWifiBleState(wifi_ble);
+        setWorkMode(wifi_ble);
     }
 
     private void setClearSagittaeButtonVisibility(boolean cssChecked) {
@@ -1110,6 +1127,19 @@ public class WiFiAugmentedRealityActivity extends Activity
 
     private void setSoundState(boolean state) {
         mAimView.setSound(state);
+    }
+
+    /**
+     * Set Wi-Fi / BLE workmode. Implemented using control Switch. Note: it produces boolean values.
+     * @param mode true: Wi-Fi false: BLE
+     */
+    private void setWorkMode(boolean mode) {
+        if (mode) {
+            GlobalSettings.setMode(GlobalSettings.WorkMode.WIFI);
+        } else {
+            GlobalSettings.setMode(GlobalSettings.WorkMode.BLE);
+        }
+        showCreateBleButton(!mode);
     }
 
     private void loadOptions() {
@@ -1140,6 +1170,11 @@ public class WiFiAugmentedRealityActivity extends Activity
         setSoundState(soundOn);
         Switch sound = (Switch) findViewById(b_on_off_sound);
         sound.setChecked(soundOn);
+
+        boolean wifi_ble_state = optionsHolder.loadWifiBleState();
+        setWorkMode(wifi_ble_state);
+        Switch wifi_ble = (Switch) findViewById(b_wifi_ble_switch);
+        wifi_ble.setChecked(wifi_ble_state);
     }
 
     public void showNameBlePanel(View view) {
@@ -1152,6 +1187,11 @@ public class WiFiAugmentedRealityActivity extends Activity
 
     public void saveBleName(View view) {
         findViewById(R.id.create_ble_name_panel).setVisibility(View.GONE);
+
+        if (mSelectedNetwork == null) {
+            Toast.makeText(this, R.string.ble_device_not_chosen, Toast.LENGTH_LONG).show();
+            return;
+        }
 
         String name = ((EditText)findViewById(R.id.et_ble_name)).getText().toString();
         mSelectedNetwork.BleName = name;

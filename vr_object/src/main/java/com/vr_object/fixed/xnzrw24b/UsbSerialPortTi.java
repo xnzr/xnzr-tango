@@ -12,8 +12,6 @@ import android.hardware.usb.UsbRequest;
 import android.os.Build;
 import android.util.Log;
 
-import com.vr_object.fixed.xnzrw24b.data.GlobalSettings;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -88,7 +86,7 @@ public class UsbSerialPortTi {
 
                 //Only while BLE and Wi-Fi devices have same productId!
 //                GlobalSettings.setMode(GlobalSettings.WorkMode.WIFI);
-                GlobalSettings.setMode(GlobalSettings.WorkMode.BLE);
+//                GlobalSettings.setMode(GlobalSettings.WorkMode.BLE);
                 return;
             }
 

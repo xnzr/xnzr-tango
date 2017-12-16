@@ -15,6 +15,9 @@
     <string name="sagitta_button_switch">Sagitta remove button</string>
     <string name="remove_sagitta_button_text_off">Hidden</string>
     <string name="remove_sagitta_button_text_on">Shown</string>
+    <string name="switch_wifi_ble">Switch Wi-Fi/BLE</string>
+    <string name="switched_to_wifi_text">Wi-Fi</string>
+    <string name="switched_to_ble_text">BLE</string>
     <string name="save_options_text">Save</string>
     <string name="close_options_text">Close</string>
     <string name="sagittae_length_text">Sagittae length, m</string>
@@ -30,4 +33,5 @@
     <string name="peleng_tab_head">Dir finder</string>
     <string name="screen_tab_head">Screen</string>
     <string name="ghz_notion">GHz</string>
+    <string name="ble_device_not_chosen">BLE device did not chosen. Nothing to save.</string>
 </resources>

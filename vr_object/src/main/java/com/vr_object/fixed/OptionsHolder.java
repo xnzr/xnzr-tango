@@ -2,7 +2,6 @@ package com.vr_object.fixed;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ProviderInfo;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -16,6 +15,7 @@ public class OptionsHolder {
     private final String SHOW_REMOVE_SAGITTAE_BUTTON_KEY = "show_remove_sagittae_button";
     private final String CIRCLE_VISIBILITY_KEY = "circle_visibility";
     private final String SOUND_ON_OFF_KEY = "sound_on_off";
+    private final String SWITCH_WIFI_BLE_KEY = "switch_wifi_ble";
 
     private final String OPTIONS_NAME = "WiFiAugmentedRealityActivity";
 
@@ -24,6 +24,7 @@ public class OptionsHolder {
     private final boolean DEFAULT_SAGITTAE_BUTTON_VISIBILITY = true;
     private final boolean DEFAULT_CIRCLE_VISIBILITY = true;
     private final boolean DEFAULT_SOUND_STATE = true;
+    private final boolean DEFAULT_WIFI_BLE_STATE = true; //true is wi-fi, false is ble; this is a feature of switch control
 
     private SharedPreferences mPref;
 
@@ -103,6 +104,20 @@ public class OptionsHolder {
 
         SharedPreferences.Editor e = mPref.edit();
         e.putBoolean(SOUND_ON_OFF_KEY, value);
+        e.apply();
+    }
+
+    boolean loadWifiBleState() {
+        loadPreferences();
+
+        return mPref.getBoolean(SWITCH_WIFI_BLE_KEY, DEFAULT_WIFI_BLE_STATE);
+    }
+
+    void saveWifiBleState(boolean value) {
+        loadPreferences();
+
+        SharedPreferences.Editor e = mPref.edit();
+        e.putBoolean(SWITCH_WIFI_BLE_KEY, value);
         e.apply();
     }
 }

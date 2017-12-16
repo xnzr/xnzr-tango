@@ -226,6 +226,17 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
 
+                                <Switch
+                                    android:id="@+id/b_wifi_ble_switch"
+                                    style="@style/OptionsText"
+                                    android:checked="true"
+                                    android:text=""
+                                    android:textOn="@string/switched_to_wifi_text"
+                                    android:textOff="@string/switched_to_ble_text"
+                                    android:layout_margin="@dimen/options_group_margin"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content" />
+
                             </LinearLayout>
 
                         </LinearLayout>
@@ -370,14 +381,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-
-
-
-
-
-
-
 
         </LinearLayout>
 
