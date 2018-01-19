@@ -17,6 +17,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Bundle;
 import android.os.Message;
+import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -89,19 +90,13 @@ import static com.vr_object.fixed.R.id.sagittae_length_setter;
 import static com.vr_object.fixed.R.id.threshold_setter;
 import static com.vr_object.fixed.R.id.tw_scanning_message;
 
-public class WiFiAugmentedRealityActivity extends Activity
+public class WiFiAugmentedRealityActivity extends BaseFinderActivity
         implements View.OnClickListener,
         View.OnTouchListener,
         NetworkInfoFragment.OnListFragmentInteractionListener,
         ChannelInfoFragment.OnListFragmentInteractionListener {
     private static final String TAG = WiFiAugmentedRealityActivity.class.getSimpleName();
     private static final int INVALID_TEXTURE_ID = 0;
-    private static final boolean DEBUG = false;
-    private static final int REQUEST_CODE_SCREEN_CAPTURE = 1;
-    private static final int EXTERNAL_STORAGE_REQUEST_CODE = 2;
-    private static final int RECORD_AUDIO_REQUEST_CODE = 2;
-    public static final int MAX_PROGRESS_RSSI = -40;
-    public static final int MIN_PROGRESS_RSSI = -100;
     private MyBroadcastReceiver mReceiver;
 
     private TextView mTextView;
@@ -190,6 +185,8 @@ public class WiFiAugmentedRealityActivity extends Activity
 
     private OptionsHolder optionsHolder = new OptionsHolder(this);
 
+    private PowerManager.WakeLock wakeLock;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -202,6 +199,7 @@ public class WiFiAugmentedRealityActivity extends Activity
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         int tangoVersion = Tango.getVersion(this.getApplicationContext());
 
@@ -283,6 +281,10 @@ public class WiFiAugmentedRealityActivity extends Activity
         if (mReceiver == null) {
             mReceiver = new MyBroadcastReceiver(this);
         }
+
+        PowerManager mgr = (PowerManager)getSystemService(Context.POWER_SERVICE);
+        wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
+        wakeLock.acquire();
     }
 
     private void setupSaggitaeLengthSetter() {
@@ -480,6 +482,7 @@ public class WiFiAugmentedRealityActivity extends Activity
     @Override
     public void onDestroy() {
         super.onDestroy();
+        wakeLock.release();
     }
 
 
@@ -1445,11 +1448,11 @@ public class WiFiAugmentedRealityActivity extends Activity
     }
 
     private void changeChannel() {
-        changeChannel(0);
+        changeChannel(1);
     }
 
     private void changeChannel(int chan) {
-        Log.d(TAG, "changeChannel ");
+        Log.d(TAG, String.format("changeChannel: %d", chan));
 
         switch (GlobalSettings.getMode()) {
             case WIFI:
