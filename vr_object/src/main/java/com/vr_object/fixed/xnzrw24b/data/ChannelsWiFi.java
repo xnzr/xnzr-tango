@@ -1,9 +1,5 @@
 package com.vr_object.fixed.xnzrw24b.data;
 
-import com.vr_object.fixed.BuildConfig;
-
-import java.util.Locale;
-
 /**
  * Created by Michael Lukin on 11.11.2017.
  */
@@ -17,18 +13,18 @@ public class ChannelsWiFi {
         return (channel >= FIRST_CHANNEL_24) && (channel <= LAST_CHANNEL_24);
     }
     public static float channelFreq24GHz(int channel) throws IllegalArgumentException {
-        if (BuildConfig.DEBUG) {
-            if (!isChannelValid24(channel)) {
-                throw new IllegalArgumentException(String.format(Locale.ENGLISH, "Invalid channel number: %d", channel));
-            }
-        } else {
+//        if (BuildConfig.DEBUG) {
+//            if (!isChannelValid24(channel)) {
+//                throw new IllegalArgumentException(String.format(Locale.ENGLISH, "Invalid channel number: %d", channel));
+//            }
+//        } else {
             if (channel < FIRST_CHANNEL_24) {
                 channel = FIRST_CHANNEL_24;
             }
             if (channel > LAST_CHANNEL_24) {
                 channel = LAST_CHANNEL_24;
             }
-        }
+//        }
         return FIRST_CHANNEL_CENTRAL_FREQ_24_GHz + CHANNEL_DELTA_24_GHz * (channel - 1);
     }
 }

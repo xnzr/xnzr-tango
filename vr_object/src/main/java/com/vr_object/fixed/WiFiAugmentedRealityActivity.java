@@ -1448,7 +1448,7 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
     }
 
     private void changeChannel() {
-        changeChannel(1);
+        changeChannel(0);
     }
 
     private void changeChannel(int chan) {

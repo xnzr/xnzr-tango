@@ -77,11 +77,11 @@ public class ChannelInfoFragment extends Fragment {
             }
             if (newChannel != null) {
                 mChannels.add(newChannel);
+                mAdapter.notifyDataSetChanged();
             } else {
                 Log.w(TAG, "addInfo: packet was lost!!!!");
             }
         }
-        mAdapter.notifyDataSetChanged();
     }
 
     public void clearList() {
