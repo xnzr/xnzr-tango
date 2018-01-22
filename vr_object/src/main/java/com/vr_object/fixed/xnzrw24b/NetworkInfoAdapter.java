@@ -1,5 +1,6 @@
 package com.vr_object.fixed.xnzrw24b;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.vr_object.fixed.OptionsHolder;
 import com.vr_object.fixed.R;
 import com.vr_object.fixed.xnzrw24b.NetworkInfoFragment.OnListFragmentInteractionListener;
 import com.vr_object.fixed.xnzrw24b.data.GlobalSettings;
@@ -16,11 +18,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link NetworkInfo} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
+import static android.content.Context.MODE_PRIVATE;
+
 public class NetworkInfoAdapter extends RecyclerView.Adapter<NetworkInfoAdapter.ViewHolder> {
 
     private final List<NetworkInfo> mValues;
@@ -29,13 +28,13 @@ public class NetworkInfoAdapter extends RecyclerView.Adapter<NetworkInfoAdapter.
     private int mSelectedPosition = -1;
     private CopyOnWriteArrayList<ViewHolder> mViewHolders = new CopyOnWriteArrayList<>();
 
-    public NetworkInfoAdapter(RecyclerView recyclerView, List<NetworkInfo> items, OnListFragmentInteractionListener listener) {
+    NetworkInfoAdapter(RecyclerView recyclerView, List<NetworkInfo> items, OnListFragmentInteractionListener listener) {
         mRecyclerView = recyclerView;
         mValues = items;
         mListener = listener;
     }
 
-    public void updateNameBLE(String mac, String name) {
+    void updateNameBLE(String mac, String name) {
         if (GlobalSettings.getMode() != GlobalSettings.WorkMode.BLE) {
             return;
         }
@@ -110,13 +109,38 @@ public class NetworkInfoAdapter extends RecyclerView.Adapter<NetworkInfoAdapter.
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mSsidView;
-        public final TextView mMacView;
-        public NetworkInfo mItem;
+    void tryLoadLastSelected() {
+        SharedPreferences mPref = mRecyclerView.getContext().getSharedPreferences(OptionsHolder.OPTIONS_NAME, MODE_PRIVATE);
+        boolean save = mPref.getBoolean(OptionsHolder.SAVE_SELECTED_ID_KEY, OptionsHolder.DEFAULT_SAVE_SELECTED_ID);
 
-        public ViewHolder(View view) {
+        //we want load last selection if and only if saving is on and signal source did not selected.
+        if (!save || mSelectedPosition != -1) {
+            return;
+        }
+
+        String name = mPref.getString(OptionsHolder.SAVED_ID_KEY, OptionsHolder.DEFAULT_SAVED_ID);
+        if (!Objects.equals(name, OptionsHolder.DEFAULT_SAVED_ID)) {
+            for (int i = 0; i < mValues.size(); i++) {
+                NetworkInfo ni = mValues.get(i);
+                if (ni.BleName.equals(name) || ni.Ssid.equals(name)) {
+                    mSelectedPosition = i;
+                    notifyItemChanged(mSelectedPosition);
+                    if (null != mListener) {
+                        mListener.onListFragmentInteraction(ni);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        final View mView;
+        final TextView mSsidView;
+        final TextView mMacView;
+        NetworkInfo mItem;
+
+        ViewHolder(View view) {
             super(view);
             mView = view;
             mSsidView = (TextView) view.findViewById(R.id.row_ssid);
@@ -128,8 +152,9 @@ public class NetworkInfoAdapter extends RecyclerView.Adapter<NetworkInfoAdapter.
                 public void onClick(View v) {
                     // Redraw the old selection and the new
                     notifyItemChanged(mSelectedPosition);
-                    mSelectedPosition = getLayoutPosition();
+                    mSelectedPosition = getLayoutPosition();    
                     notifyItemChanged(mSelectedPosition);
+                    saveSelectedId();
 
                     if (null != mListener) {
                         // Notify the active callbacks interface (the activity, if the
@@ -139,6 +164,24 @@ public class NetworkInfoAdapter extends RecyclerView.Adapter<NetworkInfoAdapter.
                 }
             });
         }
+
+
+
+        private void saveSelectedId() {
+            if (mSelectedPosition < 0 || mSelectedPosition >= mValues.size()) {
+                return;
+            }
+            SharedPreferences mPref = mRecyclerView.getContext().getSharedPreferences(OptionsHolder.OPTIONS_NAME, MODE_PRIVATE);
+            boolean save = mPref.getBoolean(OptionsHolder.SAVE_SELECTED_ID_KEY, OptionsHolder.DEFAULT_SAVE_SELECTED_ID);
+            if (save) {
+                NetworkInfo info = mValues.get(mSelectedPosition);
+                SharedPreferences.Editor e = mPref.edit();
+                e.putString(OptionsHolder.SAVED_ID_KEY, info.getId());
+                e.apply();
+            }
+        }
+
+
 
         @Override
         public String toString() {

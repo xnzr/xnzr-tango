@@ -16,8 +16,10 @@ public class OptionsHolder {
     private final String CIRCLE_VISIBILITY_KEY = "circle_visibility";
     private final String SOUND_ON_OFF_KEY = "sound_on_off";
     private final String SWITCH_WIFI_BLE_KEY = "switch_wifi_ble";
+    public static final String SAVE_SELECTED_ID_KEY = "save_selected_id";
+    public static final String SAVED_ID_KEY = "saved_id";
 
-    private final String OPTIONS_NAME = "WiFiAugmentedRealityActivity";
+    public static final String OPTIONS_NAME = "WiFiAugmentedRealityActivity";
 
     private final int DEFAULT_THRESHOLD = 3000;
     private final int DEFAULT_SAGGITAE_LENGTH = 5;
@@ -25,10 +27,12 @@ public class OptionsHolder {
     private final boolean DEFAULT_CIRCLE_VISIBILITY = true;
     private final boolean DEFAULT_SOUND_STATE = true;
     private final boolean DEFAULT_WIFI_BLE_STATE = true; //true is wi-fi, false is ble; this is a feature of switch control
+    public static final boolean DEFAULT_SAVE_SELECTED_ID = true;
+    public static final String DEFAULT_SAVED_ID = "";
 
     private SharedPreferences mPref;
 
-    Context mActivity;
+    private Context mActivity;
     OptionsHolder(Context activity) {
         mActivity = activity;
     }

@@ -26,7 +26,17 @@ public final class NetworkInfo {
     public String Mac;
     public String BleName = "";
 
-    public ArrayList<ChannelInfo> Channels = new ArrayList<ChannelInfo>();
+    public ArrayList<ChannelInfo> Channels = new ArrayList<>();
+
+    public String getId() {
+        switch (GlobalSettings.getMode()) {
+            case WIFI:
+                return Ssid;
+            case BLE:
+                return BleName;
+        }
+        return Ssid;
+    }
 
     public boolean addChannel(PacketFromDevice packet) {
         boolean result = false;

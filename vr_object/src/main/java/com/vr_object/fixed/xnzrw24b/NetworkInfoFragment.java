@@ -37,8 +37,6 @@ public class NetworkInfoFragment extends Fragment {
     private List<NetworkInfo> networks = new ArrayList<>();
     private NetworkInfoAdapter mAdapter;
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static NetworkInfoFragment newInstance(OnListFragmentInteractionListener listener) {
         NetworkInfoFragment fragment = new NetworkInfoFragment();
         fragment.mListener = listener;
@@ -70,6 +68,7 @@ public class NetworkInfoFragment extends Fragment {
             networkInfo = new NetworkInfo(packet);
             networks.add(networkInfo);
             mAdapter.notifyDataSetChanged();
+            mAdapter.tryLoadLastSelected();
         }
 
         if (GlobalSettings.getMode() == GlobalSettings.WorkMode.BLE) {
