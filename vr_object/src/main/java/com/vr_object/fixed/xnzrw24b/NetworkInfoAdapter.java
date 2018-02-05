@@ -122,7 +122,7 @@ public class NetworkInfoAdapter extends RecyclerView.Adapter<NetworkInfoAdapter.
         if (!Objects.equals(name, OptionsHolder.DEFAULT_SAVED_ID)) {
             for (int i = 0; i < mValues.size(); i++) {
                 NetworkInfo ni = mValues.get(i);
-                if (ni.BleName.equals(name) || ni.Ssid.equals(name)) {
+                if (ni.Mac.equals(name) || ni.Ssid.equals(name)) {
                     mSelectedPosition = i;
                     notifyItemChanged(mSelectedPosition);
                     if (null != mListener) {

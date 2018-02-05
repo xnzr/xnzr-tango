@@ -33,7 +33,7 @@ public final class NetworkInfo {
             case WIFI:
                 return Ssid;
             case BLE:
-                return BleName;
+                return Mac;
         }
         return Ssid;
     }
@@ -42,7 +42,7 @@ public final class NetworkInfo {
         boolean result = false;
         ChannelInfo chan = null;
 
-        for (ChannelInfo ch: Channels) {
+        for (ChannelInfo ch : Channels) {
             if (ch.Channel == packet.wifiCh) {
                 chan = ch;
                 break;
