@@ -34,4 +34,6 @@
     <string name="screen_tab_head">Экран</string>
     <string name="ghz_notion">ГГц</string>
     <string name="ble_device_not_chosen">Bluetooth устройство не выбрано. Имя не сохранено.</string>
+    <string name="check_usb_connection">Проверьте подключение к пеленгатору.</string>
+
 </resources>

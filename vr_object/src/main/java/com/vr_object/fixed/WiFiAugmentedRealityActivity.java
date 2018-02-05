@@ -1473,6 +1473,9 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
                 }
             } catch (IOException e1) {
                 e1.printStackTrace();
+            } catch (NullPointerException e1) {
+                e1.printStackTrace();
+                Toast.makeText(this, R.string.check_usb_connection, Toast.LENGTH_LONG).show();
             }
 
             if (++curChan > 13) {
