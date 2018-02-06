@@ -75,6 +75,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.vr_object.fixed.R.id.b_clear_sagittae;
@@ -217,7 +218,6 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
 
         //progress bar
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        mProgressBar.setMax(MAX_PROGRESS_RSSI - MIN_PROGRESS_RSSI);
         lastUpdateTime = System.currentTimeMillis();
 
         mTextView = (TextView) findViewById(R.id.textView);
@@ -364,20 +364,33 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
         });
     }
 
+    /**
+     * Sigmoid with followimg params:
+     * f(0) ~ 100%
+     * f(3000) ~ 80%
+     * after that swiftly descend
+     * @param x
+     * @return sigmoid
+     */
+    private double progressSigmoid(double x) {
+        return 100-100/(1+Math.exp(-(x-4500)/1000));
+    }
+
     private void updateLevelDiff(double levelDiff) {
         long deltaTime = System.currentTimeMillis() - lastUpdateTime;
         int progress = (int) Math.floor(100.0 * levelDiff);
+        int sigma = (int)progressSigmoid(progress);
 
-        String text = String.format("%d (%a)", progress, levelDiff);
+        String text = String.format(Locale.ENGLISH, "%d%%", sigma);
         mTextView.setText(text);
 
         // lines
         if (deltaTime > TIME_PERIOD) {
-            if (progress < mThreshold) {
+            if (sigma >= mThreshold) {
                 addBearing();
+                lastUpdateTime = System.currentTimeMillis();
                 numUpdates++;
             }
-            lastUpdateTime = System.currentTimeMillis();
         }
 
         setLevel(levelDiff);
@@ -1077,8 +1090,7 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
 
     private void saveOptions() {
         SeekBar thrSB = (SeekBar) findViewById(threshold_setter);
-        int thr = thrSB.getProgress();
-        mThreshold = thr - thr % 100;
+        mThreshold = thrSB.getProgress();
         optionsHolder.saveThreshold(mThreshold);
 
         SeekBar slSB = (SeekBar) findViewById(sagittae_length_setter);

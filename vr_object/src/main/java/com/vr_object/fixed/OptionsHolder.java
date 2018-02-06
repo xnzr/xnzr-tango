@@ -21,7 +21,7 @@ public class OptionsHolder {
 
     public static final String OPTIONS_NAME = "WiFiAugmentedRealityActivity";
 
-    private final int DEFAULT_THRESHOLD = 3000;
+    private final int DEFAULT_THRESHOLD = 80;
     private final int DEFAULT_SAGGITAE_LENGTH = 5;
     private final boolean DEFAULT_SAGITTAE_BUTTON_VISIBILITY = true;
     private final boolean DEFAULT_CIRCLE_VISIBILITY = true;
@@ -45,7 +45,14 @@ public class OptionsHolder {
 
     int loadThreshold() {
         loadPreferences();
-        return mPref.getInt(THRESHOLD_KEY, DEFAULT_THRESHOLD);
+        int res = mPref.getInt(THRESHOLD_KEY, DEFAULT_THRESHOLD);
+        if (res < 0) {
+            res = 0;
+        }
+        if (res > 100) {
+            res = 80;
+        }
+        return res;
     }
 
     void saveThreshold(int value) {
