@@ -8,5 +8,6 @@
     <dimen name="activity_horizontal_margin">64dp</dimen>
     <dimen name="options_label_margin">5dp</dimen>
     <dimen name="options_group_margin">15dp</dimen>
+    <dimen name="radio_size">50dp</dimen>
 
 </resources>

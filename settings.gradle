@@ -1,1 +1,1 @@
-include ':vr_object', ':xnzr_general'
+include ':vr_object'
