@@ -23,13 +23,26 @@ class MapView(context: Context?, private val mapInfo: MapInfo) : View(context) {
     private enum class State {Idle, StartCreateRadio, CreateRadio}
     private var state = State.Idle
 
+    private data class Vector2(val x: Float, val y: Float)
+
     init {
         listenClicks()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        mapRectF = RectF(0f, 0f, w.toFloat(), h.toFloat())
+        mapRectF = calcProperRect(w.toFloat(), h.toFloat())
+    }
+
+    private fun calcProperRect(viewWidth: Float, viewHeight: Float): RectF {
+        val viewRatio = viewWidth/viewHeight
+        val mapRatio = mapInfo.width/mapInfo.height
+
+        return if (mapRatio >= viewRatio) { //map is wider
+            RectF(0f, 0f, viewWidth, viewWidth/mapRatio)
+        } else { //view is wider
+            RectF(0f, 0f, viewHeight*mapRatio, viewHeight)
+        }
     }
 
     override fun onDraw(canvas: Canvas?) {
