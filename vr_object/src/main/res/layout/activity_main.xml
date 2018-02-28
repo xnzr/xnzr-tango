@@ -93,6 +93,14 @@
             android:src="@drawable/icon_save_128"
             android:scaleType="fitEnd"/>
 
+        <ImageButton
+            android:id="@+id/b_show_map"
+            android:onClick="showMap"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/icons8_ibeacon_96"
+            android:scaleType="fitEnd"/>
+
     </LinearLayout>
 
     <FrameLayout
@@ -397,7 +405,13 @@
             android:layout_width="130dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:layout_weight="0.1875"></FrameLayout>
+            android:layout_weight="0.1875" />
+
+        <FrameLayout
+            android:id="@+id/map_frame"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -433,7 +447,7 @@
             android:layout_width="130dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:layout_weight="0.1875"></FrameLayout>
+            android:layout_weight="0.1875" />
 
     </LinearLayout>
 

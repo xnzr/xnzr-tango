@@ -3,6 +3,7 @@ package com.vr_object.fixed;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.media.projection.MediaProjectionManager;
+import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Bundle;
@@ -69,7 +71,10 @@ import com.vr_object.fixed.xnzrw24b.data.ChannelInfo;
 import com.vr_object.fixed.xnzrw24b.data.ChannelsWiFi;
 import com.vr_object.fixed.xnzrw24b.data.GlobalSettings;
 import com.vr_object.fixed.xnzrw24b.data.NetworkInfo;
+import com.vr_object.map_editor.MapFragment;
 import com.vr_object.screencast.ScreenRecorderService;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -95,7 +100,8 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
         implements View.OnClickListener,
         View.OnTouchListener,
         NetworkInfoFragment.OnListFragmentInteractionListener,
-        ChannelInfoFragment.OnListFragmentInteractionListener {
+        ChannelInfoFragment.OnListFragmentInteractionListener,
+        MapFragment.OnFragmentInteractionListener  {
     private static final String TAG = WiFiAugmentedRealityActivity.class.getSimpleName();
     private static final int INVALID_TEXTURE_ID = 0;
     private MyBroadcastReceiver mReceiver;
@@ -1213,6 +1219,15 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
 
         firebaseProxy.PushData(mSelectedNetwork.Mac, name);
     }
+    
+    public void showMap(View view) {
+        Fragment mapFragment = new com.vr_object.map_editor.MapFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.map_frame, mapFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+        Toast.makeText(this, "Map!", Toast.LENGTH_LONG).show();
+    }
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -1425,7 +1440,6 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
             //Log.d(TAG, "Have " + packets.size() + " wfifi packets" );
 
             if (packets.size() > 0) {
-                //TODO: Send packets
                 for (PacketFromDevice p : packets) {
                     sendInfo(p.toString());
                     sendData(p);
@@ -1690,6 +1704,11 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
     private void updateRecording(final boolean isRecording, final boolean isPausing) {
         if (DEBUG) Log.v(TAG, "updateRecording:isRecording=" + isRecording + ",isPausing=" + isPausing);
         //TODO: update buttons
+    }
+
+    @Override
+    public void onFragmentInteraction(@NotNull Uri uri) {
+
     }
 
 

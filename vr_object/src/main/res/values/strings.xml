@@ -35,4 +35,7 @@
     <string name="ghz_notion">GHz</string>
     <string name="ble_device_not_chosen">BLE device did not chosen. Nothing to save.</string>
     <string name="check_usb_connection">Check USB connection with device.</string>
+    <string name="t_open_map">Open map</string>
+    <string name="t_create_radio">Create radio</string>
+    <string name="t_move_radio">Move radio</string>
 </resources>
