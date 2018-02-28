@@ -33,6 +33,13 @@
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />
 
+    <!--<FrameLayout-->
+    <!--android:id="@+id/map_frame"-->
+    <!--android:layout_gravity="center"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent" />-->
+
+
     <ImageButton
         android:id="@+id/b_clear_sagittae"
         android:layout_width="50dp"
@@ -407,11 +414,7 @@
             android:layout_gravity="start"
             android:layout_weight="0.1875" />
 
-        <FrameLayout
-            android:id="@+id/map_frame"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -450,5 +453,12 @@
             android:layout_weight="0.1875" />
 
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/map_frame"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 
 </FrameLayout>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="options_background">#80808080</color>
+    <color name="map_background">#A0A0A0A0</color>
     <color name="wifi_selected">#6000A000</color>
     <color name="wifi_info">#202020</color>
 </resources>
