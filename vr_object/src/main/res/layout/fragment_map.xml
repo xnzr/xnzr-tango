@@ -14,6 +14,7 @@
 
         <LinearLayout
             style="?android:attr/buttonBarStyle"
+            android:background="@color/button_bar_background"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -29,6 +30,27 @@
                 style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/b_create_radio"
                 android:text="@string/t_create_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:id="@+id/b_remove_radio"
+                android:text="@string/t_remove_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:id="@+id/b_save_map"
+                android:text="@string/t_save_map"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:id="@+id/b_save_map_as"
+                android:text="@string/t_save_map_as"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

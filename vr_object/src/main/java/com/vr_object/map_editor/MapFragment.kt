@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
@@ -14,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import com.vr_object.fixed.OpenFileDialog
 import com.vr_object.fixed.R
 import kotlinx.android.synthetic.main.fragment_map.*
 
@@ -53,11 +53,19 @@ class MapFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         b_open_map.setOnClickListener({
-            loadMap(Environment.getExternalStorageDirectory().absolutePath + "/xnzr-maps/map6.mxn")
+            pickMap()
         })
 
         b_create_radio.setOnClickListener {
             mapView?.createRadio()
+        }
+
+        b_save_map.setOnClickListener {
+
+        }
+
+        b_save_map_as.setOnClickListener {
+            saveMapAs()
         }
     }
 
@@ -126,6 +134,14 @@ class MapFragment : Fragment() {
         mapView?.createRadio()
     }
 
+    private fun pickMap() {
+        val fileDialog = OpenFileDialog(activity)
+        fileDialog.setOpenDialogListener {
+            loadMap(it)
+        }
+        fileDialog.show()
+    }
+
     private fun loadMap(path: String) {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
                 PackageManager.PERMISSION_GRANTED) {
@@ -144,6 +160,15 @@ class MapFragment : Fragment() {
             Log.d(this.javaClass.name, e.message)
             e.printStackTrace()
         }
+    }
+
+    private fun saveMapAs() {
+        val fileDialog = OpenFileDialog(activity)
+        fileDialog.setFilter(".*\\.mxn")
+        fileDialog.setOpenDialogListener {
+            MapInfo.saveToXml(it, mapInfo)
+        }
+        fileDialog.show()
     }
 
     private fun showMapView() {
