@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import com.vr_object.fixed.OpenFileDialog
 import com.vr_object.fixed.R
 import kotlinx.android.synthetic.main.fragment_map.*
@@ -136,6 +137,7 @@ class MapFragment : Fragment() {
 
     private fun pickMap() {
         val fileDialog = OpenFileDialog(activity)
+        fileDialog.setFilter(".*((.mxn)|(.jpg)|(.png))$")
         fileDialog.setOpenDialogListener {
             loadMap(it)
         }
@@ -154,12 +156,27 @@ class MapFragment : Fragment() {
         }
 
         try {
-            mapInfo = MapInfo.loadFromXml(path)
+            val ext = getExtension(path).toLowerCase()
+            when (ext) {
+                ".mxn" -> mapInfo = MapInfo.loadFromXml(path)
+                ".jpg" -> mapInfo = MapInfo.loadFromImage(path)
+                ".jpeg" -> mapInfo = MapInfo.loadFromImage(path)
+                ".png" -> mapInfo = MapInfo.loadFromImage(path)
+                else -> return
+            }
+
             showMapView()
         } catch (e: Exception) {
+            activity.runOnUiThread({
+                Toast.makeText(activity, resources.getString(R.string.could_not_open_file), Toast.LENGTH_LONG).show()
+            })
             Log.d(this.javaClass.name, e.message)
             e.printStackTrace()
         }
+    }
+
+    private fun getExtension(file: String): String {
+        return file.substring(file.lastIndexOf('.'))
     }
 
     private fun saveMapAs() {
