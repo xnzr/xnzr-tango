@@ -13,15 +13,12 @@ import java.util.concurrent.CopyOnWriteArrayList
 class MapInfo internal constructor() {
 
 
-    var radioSources: CopyOnWriteArrayList<RadioSource>? = null
+    val radioSources: CopyOnWriteArrayList<RadioSource>? = CopyOnWriteArrayList()
 
     var map = ByteArray(0)
     var width: Int = 0
     var height: Int = 0
 
-    init {
-        radioSources = CopyOnWriteArrayList()
-    }
 
     internal fun addRadioSource(source: RadioSource) {
         radioSources!!.add(source)

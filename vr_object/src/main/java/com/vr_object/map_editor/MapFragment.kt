@@ -58,7 +58,11 @@ class MapFragment : Fragment() {
         })
 
         b_create_radio.setOnClickListener {
-            mapView?.createRadio()
+            mapView?.onCreateRadioClick()
+        }
+
+        b_remove_radio.setOnClickListener {
+            mapView?.onDeleteRadioClick()
         }
 
         b_save_map.setOnClickListener {
@@ -128,11 +132,6 @@ class MapFragment : Fragment() {
             fragment.arguments = args
             return fragment
         }
-    }
-
-
-    fun createRadioClick(view: View){
-        mapView?.createRadio()
     }
 
     private fun pickMap() {

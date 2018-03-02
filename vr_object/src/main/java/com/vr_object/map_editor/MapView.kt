@@ -20,7 +20,7 @@ class MapView(context: Context?, private val mapInfo: MapInfo) : View(context) {
     private var radioHeight = resources.getDimension(R.dimen.radio_size)
     private var mapRectF = RectF(0f, 0f, 100f, 100f) //some default value to achieve consistency while View size is unknown
 
-    private enum class State {Idle, StartCreateRadio, CreateRadio}
+    private enum class State {Idle, StartCreateRadio, CreateRadio, StartDeleteRadio, DeleteRadio}
     private var state = State.Idle
 
     private data class Vector2(val x: Float, val y: Float)
@@ -73,20 +73,46 @@ class MapView(context: Context?, private val mapInfo: MapInfo) : View(context) {
         when (state) {
             State.Idle -> Unit
             State.StartCreateRadio -> beginPlaceRadio()
-            State.CreateRadio -> Unit
+            State.StartDeleteRadio -> beginDeleteRadio()
+            else -> Unit
         }
     }
 
     private fun onTouchUp(event: MotionEvent) {
         when (state) {
-            State.Idle -> Unit
-            State.StartCreateRadio -> Unit
             State.CreateRadio -> placeRadio(event.x, event.y)
+            State.DeleteRadio -> deleteRadio(event.x, event.y)
+            else -> Unit
         }
     }
 
     private fun beginPlaceRadio() {
         state = State.CreateRadio
+    }
+
+    private fun beginDeleteRadio() {
+        state = State.DeleteRadio
+    }
+
+    private fun calcDistance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+        return Math.sqrt(((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)).toDouble()).toFloat()
+    }
+
+    private fun deleteRadio(x: Float, y: Float) {
+        mapInfo.radioSources?.let {
+            for (r in mapInfo.radioSources) {
+                val rxUnscaled = (r.x*mapRectF.width()).toFloat()
+                val ryUnscaled = (r.y*mapRectF.height()).toFloat()
+                val dst = calcDistance(x, y, rxUnscaled, ryUnscaled)
+
+                if (dst < resources.getDimension(R.dimen.radio_size)) {
+                    mapInfo.radioSources.remove(r)
+                    state = State.Idle
+                    invalidate()
+                    break
+                }
+            }
+        }
     }
 
     private fun placeRadio(x: Float, y: Float) {
@@ -97,8 +123,12 @@ class MapView(context: Context?, private val mapInfo: MapInfo) : View(context) {
         invalidate()
     }
 
-    fun createRadio() {
+    fun onCreateRadioClick() {
         state = State.StartCreateRadio
+    }
+
+    fun onDeleteRadioClick() {
+        state = State.StartDeleteRadio
     }
 
     fun moveRadio() {
