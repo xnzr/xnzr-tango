@@ -36,7 +36,7 @@ class MapView(context: Context?, private val mapInfo: MapInfo) : View(context) {
 
     private fun calcProperRect(viewWidth: Float, viewHeight: Float): RectF {
         val viewRatio = viewWidth/viewHeight
-        val mapRatio = mapInfo.width/mapInfo.height
+        val mapRatio = mapInfo.width.toFloat()/mapInfo.height.toFloat()
 
         return if (mapRatio >= viewRatio) { //map is wider
             RectF(0f, 0f, viewWidth, viewWidth/mapRatio)
