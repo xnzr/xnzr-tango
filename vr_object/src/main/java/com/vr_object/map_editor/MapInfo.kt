@@ -1,11 +1,8 @@
 package com.vr_object.map_editor
 
 import android.graphics.BitmapFactory
-import android.util.Base64
-
 import com.thoughtworks.xstream.XStream
 import com.thoughtworks.xstream.io.xml.DomDriver
-
 import java.io.FileInputStream
 import java.io.IOException
 import java.io.PrintWriter
@@ -18,17 +15,8 @@ class MapInfo internal constructor() {
 
     var radioSources: CopyOnWriteArrayList<RadioSource>? = null
 
-    private var map64: String? = null
-
-    internal var map: ByteArray
-        get() = Base64.decode(map64, Base64.DEFAULT)
-        set(map) {
-            map64 = Base64.encodeToString(map, Base64.DEFAULT)
-        }
-
-
+    var map = ByteArray(0)
     var width: Int = 0
-
     var height: Int = 0
 
     init {
