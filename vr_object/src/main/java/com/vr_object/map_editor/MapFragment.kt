@@ -26,7 +26,12 @@ import kotlinx.android.synthetic.main.fragment_map.*
  * Use the [MapFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MapFragment : Fragment() {
+class MapFragment : Fragment(), MapView.OnMapChanged {
+    override fun onMapChanged() {
+        if (savingStatus == SavingStatus.Saved) {
+            savingStatus = SavingStatus.Unsaved
+        }
+    }
 
     // TODO: Rename and change types of parameters
     private var mParam1: String? = null
@@ -44,6 +49,10 @@ class MapFragment : Fragment() {
             mParam2 = arguments.getString(ARG_PARAM2)
         }
     }
+
+    private enum class SavingStatus {Saved, NewFile, Unsaved}
+    private var savingStatus = SavingStatus.Saved
+    private var lastSavedFile = ""
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -66,7 +75,7 @@ class MapFragment : Fragment() {
         }
 
         b_save_map.setOnClickListener {
-
+            saveMap()
         }
 
         b_save_map_as.setOnClickListener {
@@ -157,10 +166,10 @@ class MapFragment : Fragment() {
         try {
             val ext = getExtension(path).toLowerCase()
             when (ext) {
-                ".mxn" -> mapInfo = MapInfo.loadFromXml(path)
-                ".jpg" -> mapInfo = MapInfo.loadFromImage(path)
-                ".jpeg" -> mapInfo = MapInfo.loadFromImage(path)
-                ".png" -> mapInfo = MapInfo.loadFromImage(path)
+                ".mxn" -> loadFromXml(path)
+                ".jpg" -> loadFromImage(path)
+                ".jpeg" -> loadFromImage(path)
+                ".png" -> loadFromImage(path)
                 else -> return
             }
 
@@ -174,8 +183,29 @@ class MapFragment : Fragment() {
         }
     }
 
+    private fun loadFromImage(path: String) {
+        mapInfo = MapInfo.loadFromImage(path)
+        savingStatus = SavingStatus.NewFile
+    }
+
+    private fun loadFromXml(path: String) {
+        mapInfo = MapInfo.loadFromXml(path)
+        savingStatus = SavingStatus.Saved
+    }
+
     private fun getExtension(file: String): String {
         return file.substring(file.lastIndexOf('.'))
+    }
+
+    private fun saveMap() {
+        when (savingStatus) {
+            MapFragment.SavingStatus.Saved -> Unit
+            MapFragment.SavingStatus.NewFile -> saveMapAs()
+            MapFragment.SavingStatus.Unsaved -> {
+                MapInfo.saveToXml(lastSavedFile, mapInfo)
+                savingStatus = SavingStatus.Saved
+            }
+        }
     }
 
     private fun saveMapAs() {
@@ -187,6 +217,8 @@ class MapFragment : Fragment() {
         fileDialog.setFilter(".*\\.mxn")
         fileDialog.setOpenDialogListener {
             MapInfo.saveToXml(it, mapInfo)
+            lastSavedFile = it
+            savingStatus = SavingStatus.Saved
         }
         fileDialog.show()
     }

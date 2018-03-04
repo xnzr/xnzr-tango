@@ -25,6 +25,11 @@ class MapView(context: Context?, private val mapInfo: MapInfo) : View(context) {
 
     private data class Vector2(val x: Float, val y: Float)
 
+    interface OnMapChanged {
+        fun onMapChanged()
+    }
+    var mapListener: OnMapChanged? = null
+
     init {
         listenClicks()
     }
@@ -121,6 +126,7 @@ class MapView(context: Context?, private val mapInfo: MapInfo) : View(context) {
         mapInfo.addRadioSource(RadioSource(xScaled.toDouble(), yScaled.toDouble()))
         state = State.Idle
         invalidate()
+        mapListener?.onMapChanged()
     }
 
     fun onCreateRadioClick() {
