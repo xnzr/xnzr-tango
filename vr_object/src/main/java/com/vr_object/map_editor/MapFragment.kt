@@ -179,7 +179,11 @@ class MapFragment : Fragment() {
     }
 
     private fun saveMapAs() {
+        if (!::mapInfo.isInitialized) {
+            return
+        }
         val fileDialog = OpenFileDialog(activity)
+        fileDialog.dialogType = OpenFileDialog.DialogType.NewFiles
         fileDialog.setFilter(".*\\.mxn")
         fileDialog.setOpenDialogListener {
             MapInfo.saveToXml(it, mapInfo)
