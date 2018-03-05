@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.vr_object.fixed">
+
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+
+        <uses-library
+            android:name="com.projecttango.libtango_device2"
+            android:required="true"
+            tools:node="remove"/>
+
+        <activity
+            android:name="com.vr_object.fixed.WiFiAugmentedRealityActivity"
+            android:label="@string/app_name_long"
+            android:screenOrientation="landscape" >
+
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+            </intent-filter>
+
+            <meta-data android:name="android.hardware.usb.action.USB_ACCESSORY_ ATTACHED" android:resource="@xml/device_filter"></meta-data>
+
+        </activity>
+        <service android:name="com.vr_object.screencast.ScreenRecorderService"
+            android:enabled="true"
+            android:exported="false"/>
+    </application>
+
+</manifest>
