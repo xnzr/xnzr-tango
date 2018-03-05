@@ -35,5 +35,11 @@
     <string name="ghz_notion">ГГц</string>
     <string name="ble_device_not_chosen">Bluetooth устройство не выбрано. Имя не сохранено.</string>
     <string name="check_usb_connection">Проверьте подключение к пеленгатору.</string>
-
+    <string name="t_open_map">Открыть карту</string>
+    <string name="t_create_radio">Нанести источник</string>
+    <string name="t_remove_radio">Удалить источник</string>
+    <string name="t_save_map">Сохранить</string>
+    <string name="t_save_map_as">Сохранить как...</string>
+    <string name="t_move_radio">Подвинуть источник</string>
+    <string name="could_not_open_file">Не могу открыть файл</string>
 </resources>

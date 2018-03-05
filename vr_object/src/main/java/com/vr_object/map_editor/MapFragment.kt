@@ -153,7 +153,7 @@ class MapFragment : Fragment(), MapView.OnMapChanged {
                 PackageManager.PERMISSION_GRANTED) {
             return
         }
-        
+
         val fileDialog = OpenFileDialog(activity)
         fileDialog.setFilter(".*((.mxn)|(.jpg)|(.png))$")
         fileDialog.setOpenDialogListener {

@@ -13,7 +13,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 10
-        versionName "1.9"
+        versionName "2.0"
         multiDexEnabled true
         flavorDimensions "default"
     }
