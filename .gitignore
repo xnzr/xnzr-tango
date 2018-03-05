@@ -6,3 +6,7 @@ local.properties
 build
 captures
 /vr_object/google-services.json
+
+vr_object/noar/release/
+
+vr_object/tango/release/
