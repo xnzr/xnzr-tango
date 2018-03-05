@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
 
+    <uses-feature android:name="android.hardware.camera2.full" />
 
     <application
         android:allowBackup="true"
@@ -36,7 +37,9 @@
                 <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
             </intent-filter>
 
-            <meta-data android:name="android.hardware.usb.action.USB_ACCESSORY_ ATTACHED" android:resource="@xml/device_filter"></meta-data>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ ATTACHED"
+                android:resource="@xml/device_filter" />
 
         </activity>
         <service android:name="com.vr_object.screencast.ScreenRecorderService"

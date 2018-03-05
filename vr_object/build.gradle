@@ -47,7 +47,7 @@ android {
         }
 
         noar {
-
+            versionCode 11
         }
     }
 
