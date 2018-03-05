@@ -11,6 +11,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.media.projection.MediaProjectionManager;
@@ -21,6 +25,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -141,6 +146,8 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
     private AimView mAimView;
     private TextView mScanningMessage;
     FrameLayout mCircleFrameLayout;
+
+    private CameraManager cameraManager;
 
 
     private final float defaultSagittaeWidth = 0.001f;
@@ -390,6 +397,14 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        try {
+            cameraManager = (CameraManager) this.getSystemService(Context.CAMERA_SERVICE);
+            String camId = getCameraWithFacing(cameraManager, CameraCharacteristics.LENS_FACING_BACK);
+        } catch (CameraAccessException ex) {
+            Toast.makeText(this, "Could not use camera", Toast.LENGTH_LONG).show();
+        }
+
         mSurfaceView.onResume();
         // Set render mode to RENDERMODE_CONTINUOUSLY to force getting onDraw callbacks until the
         // Tango service is properly set-up and we start getting onFrameAvailable callbacks.
@@ -420,6 +435,35 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
     public void onDestroy() {
         super.onDestroy();
         wakeLock.release();
+    }
+
+    @Nullable
+    private String getCameraWithFacing(@NonNull CameraManager manager, int lensFacing) throws CameraAccessException {
+        String possibleCandidate = null;
+        String[] cameraIdList = manager.getCameraIdList();
+        if (cameraIdList.length == 0) {
+            return null;
+        }
+        for (String cameraId : cameraIdList) {
+            CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
+
+            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            if (map == null) {
+                continue;
+            }
+
+            Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+            if (facing != null && facing == lensFacing) {
+                return cameraId;
+            }
+
+            //just in case device don't have any camera with given facing
+            possibleCandidate = cameraId;
+        }
+        if (possibleCandidate != null) {
+            return possibleCandidate;
+        }
+        return cameraIdList[0];
     }
 
 

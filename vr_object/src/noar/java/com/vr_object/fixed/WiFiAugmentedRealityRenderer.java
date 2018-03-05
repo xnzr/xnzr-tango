@@ -75,8 +75,8 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         mOpenGlCameraPreview.setUpProgramAndBuffers();
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
-        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable
-                .red, options);
+        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(),
+                R.drawable.red, options);
         bitmap.setHasAlpha(true);
 
         int sagittaLength = optionsHolder.loadSagittaLength();
@@ -107,9 +107,6 @@ class WiFiAugmentedRealityRenderer implements GLSurfaceView.Renderer {
         GLES20.glDepthMask(true);
         GLES20.glCullFace(GLES20.GL_BACK);
 
-        if (shouldDrawSphere) {
-            mSphere.draw(gl10);
-        }
 
 //        mSagittae.draw(gl10);
         mLine.draw();
