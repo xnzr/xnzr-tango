@@ -144,15 +144,6 @@ class MapFragment : Fragment(), MapView.OnMapChanged {
     }
 
     private fun pickMap() {
-        val fileDialog = OpenFileDialog(activity)
-        fileDialog.setFilter(".*((.mxn)|(.jpg)|(.png))$")
-        fileDialog.setOpenDialogListener {
-            loadMap(it)
-        }
-        fileDialog.show()
-    }
-
-    private fun loadMap(path: String) {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
                 PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 0);
@@ -162,6 +153,17 @@ class MapFragment : Fragment(), MapView.OnMapChanged {
                 PackageManager.PERMISSION_GRANTED) {
             return
         }
+        
+        val fileDialog = OpenFileDialog(activity)
+        fileDialog.setFilter(".*((.mxn)|(.jpg)|(.png))$")
+        fileDialog.setOpenDialogListener {
+            loadMap(it)
+        }
+        fileDialog.show()
+    }
+
+    private fun loadMap(path: String) {
+
 
         try {
             val ext = getExtension(path).toLowerCase()
