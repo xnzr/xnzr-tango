@@ -253,6 +253,9 @@ public class OpenFileDialog extends AlertDialog.Builder {
                 File parentDirectory = file.getParentFile();
                 if (parentDirectory != null) {
                     currentPath = parentDirectory.getPath();
+                    if (fileNameEditText != null) {
+                        fileNameEditText.setText(currentPath);
+                    }
                     RebuildFiles(((FileAdapter) listView.getAdapter()));
                 }
             }
@@ -330,6 +333,9 @@ public class OpenFileDialog extends AlertDialog.Builder {
                 File file = adapter.getItem(index);
                 if (file.isDirectory()) {
                     currentPath = file.getPath();
+                    if (fileNameEditText != null) {
+                        fileNameEditText.setText(currentPath);
+                    }
                     RebuildFiles(adapter);
                 } else {
                     if (index != selectedIndex) {

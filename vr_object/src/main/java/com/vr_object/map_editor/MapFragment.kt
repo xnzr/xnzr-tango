@@ -124,6 +124,8 @@ class MapFragment : Fragment(), MapView.OnMapChanged {
         private val ARG_PARAM1 = "param1"
         private val ARG_PARAM2 = "param2"
 
+        val MAP_EXTENSION = ".mxn"
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -155,7 +157,7 @@ class MapFragment : Fragment(), MapView.OnMapChanged {
         }
 
         val fileDialog = OpenFileDialog(activity)
-        fileDialog.setFilter(".*((.mxn)|(.jpg)|(.png))$")
+        fileDialog.setFilter(".*(($MAP_EXTENSION)|(.jpg)|(.png))$")
         fileDialog.setOpenDialogListener {
             loadMap(it)
         }
@@ -168,7 +170,7 @@ class MapFragment : Fragment(), MapView.OnMapChanged {
         try {
             val ext = getExtension(path).toLowerCase()
             when (ext) {
-                ".mxn" -> loadFromXml(path)
+                MAP_EXTENSION -> loadFromXml(path)
                 ".jpg" -> loadFromImage(path)
                 ".jpeg" -> loadFromImage(path)
                 ".png" -> loadFromImage(path)
@@ -196,10 +198,21 @@ class MapFragment : Fragment(), MapView.OnMapChanged {
     }
 
     private fun getExtension(file: String): String {
-        return file.substring(file.lastIndexOf('.'))
+        val idx = file.lastIndexOf('.')
+        return if (idx != -1) file.substring(idx) else ""
     }
 
     private fun saveMap() {
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 0);
+        }
+
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            return
+        }
+
         when (savingStatus) {
             MapFragment.SavingStatus.Saved -> Unit
             MapFragment.SavingStatus.NewFile -> saveMapAs()
@@ -214,13 +227,30 @@ class MapFragment : Fragment(), MapView.OnMapChanged {
         if (!::mapInfo.isInitialized) {
             return
         }
+
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 0);
+        }
+
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            return
+        }
+
         val fileDialog = OpenFileDialog(activity)
         fileDialog.dialogType = OpenFileDialog.DialogType.NewFiles
-        fileDialog.setFilter(".*\\.mxn")
+        fileDialog.setFilter(".*\\$MAP_EXTENSION")
         fileDialog.setOpenDialogListener {
-            MapInfo.saveToXml(it, mapInfo)
-            lastSavedFile = it
-            savingStatus = SavingStatus.Saved
+            try {
+                val path = if (getExtension(it) == MAP_EXTENSION) it else it + MAP_EXTENSION
+                MapInfo.saveToXml(path, mapInfo)
+                lastSavedFile = it
+                savingStatus = SavingStatus.Saved
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(activity, "Could not save file", Toast.LENGTH_LONG).show()
+            }
         }
         fileDialog.show()
     }
