@@ -42,4 +42,5 @@
     <string name="t_save_map_as">Save as...</string>
     <string name="t_move_radio">Move radio</string>
     <string name="could_not_open_file">Could not open file</string>
+    <string name="camera_error">This device does not support Camera2 API.</string>
 </resources>
