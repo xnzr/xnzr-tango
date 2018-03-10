@@ -77,7 +77,6 @@ import com.vr_object.screencast.ScreenRecorderService;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -102,15 +101,7 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
         NetworkInfoFragment.OnListFragmentInteractionListener,
         ChannelInfoFragment.OnListFragmentInteractionListener,
         MapFragment.OnFragmentInteractionListener  {
-    private static final String TAG = WiFiAugmentedRealityActivity.class.getSimpleName();
-    private static final int INVALID_TEXTURE_ID = 0;
-    private MyBroadcastReceiver mReceiver;
 
-    private TextView mTextView;
-    //private TextView mTextView2;
-    private ProgressBar mProgressBar;
-    private GLSurfaceView mSurfaceView;
-    private WiFiAugmentedRealityRenderer mRenderer;
     private TangoCameraIntrinsics mIntrinsics;
     private Tango mTango;
     private TangoConfig mConfig;
@@ -118,8 +109,6 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
     private SpatialIntersect intersector;
 
     private boolean debugSagitta = false;
-
-    private DatabaseProxy firebaseProxy = new DatabaseProxy();
 
     // Texture rendering related fields.
     // NOTE: Naming indicates which thread is in charge of updating this variable
@@ -140,57 +129,11 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
 
     private TangoPointCloudManager mPointCloudManager;
 
-    private TabHost optionsTabbedWindow;
-
-    ///usb
-    private NetworkInfo mSelectedNetwork;
-    private int mSelectedChannel = 0;
-    private LevelCalculator mLevelCalculator;
-
-    private android.os.Handler handler;
-
-    private NetworkInfoFragment networksFragment;
-    private ChannelInfoFragment mChannelsFragment;
-
-    private SeekBar mThresholdSetter;
-    private TextView mThresholdView;
-    private int mThreshold;
-
-    private SeekBar mSagittaeLenghtSetter;
-    private TextView mSagittaeLengthView;
-
-    private AimView mAimView;
-    private TextView mScanningMessage;
-    FrameLayout mCircleFrameLayout;
-
-
     private final float defaultSagittaeWidth = 0.001f;
 
-    private Thread thread;
-    private UsbSerialPortTi port = null;
-//    private ScreenRecorder mScreenRecorder;
-
-
-    private final int INIT_INTERVAL_MS = 3000;
-    private final int READ_TIMEOUT_MS = 500;
-    private final int READ_BUF_SIZE = ItsPacketCreator.PACK_LEN * 16;
-
-    private final int STATE_INIT = 0;
-    private final int STATE_READING = 1;
-    private final int STATE_EXIT = 255;
-    private int state = STATE_INIT;
-
-    private int curChan = 1;
-    private int setChan = 1;
-
-    private WFPacketCreator wfCreator = new WFPacketCreator();
-    ///
-
-    private long numUpdates = 0;
     private long lastUpdateTime = 0;
     private final long TIME_PERIOD = 3 * 1000; //ms
 
-    private OptionsHolder optionsHolder = new OptionsHolder(this);
 
     private PowerManager.WakeLock wakeLock;
 
@@ -209,8 +152,6 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         int tangoVersion = Tango.getVersion(this.getApplicationContext());
-
-        //mScreenRecorder = new ScreenRecorder(this);
 
         mPointCloudManager = new TangoPointCloudManager();
 
@@ -1701,35 +1642,7 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
         startService(intent);
     }
 
-    private void updateRecording(final boolean isRecording, final boolean isPausing) {
-        if (DEBUG) Log.v(TAG, "updateRecording:isRecording=" + isRecording + ",isPausing=" + isPausing);
-        //TODO: update buttons
-    }
-
     @Override
     public void onFragmentInteraction(@NotNull Uri uri) {
-
-    }
-
-
-    private static final class MyBroadcastReceiver extends BroadcastReceiver {
-        private final WeakReference<WiFiAugmentedRealityActivity> mWeakParent;
-        public MyBroadcastReceiver(final WiFiAugmentedRealityActivity parent) {
-            mWeakParent = new WeakReference<WiFiAugmentedRealityActivity>(parent);
-        }
-
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (DEBUG) Log.v(TAG, "onReceive:" + intent);
-            final String action = intent.getAction();
-            if (ScreenRecorderService.ACTION_QUERY_STATUS_RESULT.equals(action)) {
-                final boolean isRecording = intent.getBooleanExtra(ScreenRecorderService.EXTRA_QUERY_RESULT_RECORDING, false);
-                final boolean isPausing = intent.getBooleanExtra(ScreenRecorderService.EXTRA_QUERY_RESULT_PAUSING, false);
-                final WiFiAugmentedRealityActivity parent = mWeakParent.get();
-                if (parent != null) {
-                    parent.updateRecording(isRecording, isPausing);
-                }
-            }
-        }
     }
 }

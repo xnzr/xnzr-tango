@@ -31,7 +31,6 @@ import android.media.ImageReader;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
-import android.opengl.Matrix;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -65,12 +64,10 @@ import com.vr_object.fixed.xnzrw24b.ChannelInfoFragment;
 import com.vr_object.fixed.xnzrw24b.CompareSizesByArea;
 import com.vr_object.fixed.xnzrw24b.DeviceNotFoundException;
 import com.vr_object.fixed.xnzrw24b.DeviceOpenFailedException;
-import com.vr_object.fixed.xnzrw24b.ItsPacketCreator;
 import com.vr_object.fixed.xnzrw24b.LevelCalculator;
 import com.vr_object.fixed.xnzrw24b.MessageFields;
 import com.vr_object.fixed.xnzrw24b.NetworkInfoFragment;
 import com.vr_object.fixed.xnzrw24b.PacketFromDevice;
-import com.vr_object.fixed.xnzrw24b.SpatialIntersect;
 import com.vr_object.fixed.xnzrw24b.UsbSerialPortTi;
 import com.vr_object.fixed.xnzrw24b.WFPacketCreator;
 import com.vr_object.fixed.xnzrw24b.WFParseException;
@@ -84,7 +81,6 @@ import com.vr_object.screencast.ScreenRecorderService;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -92,7 +88,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.vr_object.fixed.R.id.b_clear_sagittae;
 import static com.vr_object.fixed.R.id.b_hide_clear_sagittae;
@@ -113,92 +108,6 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
         NetworkInfoFragment.OnListFragmentInteractionListener,
         ChannelInfoFragment.OnListFragmentInteractionListener,
         MapFragment.OnFragmentInteractionListener  {
-    private static final String TAG = WiFiAugmentedRealityActivity.class.getSimpleName();
-    private static final int INVALID_TEXTURE_ID = 0;
-    private MyBroadcastReceiver mReceiver;
-
-    private TextView mTextView;
-    //private TextView mTextView2;
-    private ProgressBar mProgressBar;
-    private GLSurfaceView mSurfaceView;
-    private WiFiAugmentedRealityRenderer mRenderer;
-    private boolean mIsConnected = false;
-    private SpatialIntersect intersector;
-
-    private boolean debugSagitta = false;
-
-    private DatabaseProxy firebaseProxy = new DatabaseProxy();
-
-    // Texture rendering related fields.
-    // NOTE: Naming indicates which thread is in charge of updating this variable
-    private int mConnectedTextureIdGlThread = INVALID_TEXTURE_ID;
-    private AtomicBoolean mIsFrameAvailableTangoThread = new AtomicBoolean(false);
-    private double mRgbTimestampGlThread;
-
-    // Transform from the Earth and Moon center to OpenGL frame. This is a fixed transform.
-    private float[] mOpenGLTEarthMoonCenter = new float[16];
-    // Transform from Earth to Earth and Moon center. This will change over time, as the Earth is
-    // rotating.
-    private float[] mEarthMoonCenterTEarth = new float[16];
-    // Translation from the Moon to the Earth and Moon center. This is a fixed transform.
-    private float[] mEarthMoonCenterTTranslation = new float[16];
-    // Rotation from the Moon to the Earth and Moon center. This will change over time, as the Moon
-    // is rotating.
-    private float[] mEarthMoonCenterTMoonRotation = new float[16];
-
-    private TabHost optionsTabbedWindow;
-
-    ///usb
-    private NetworkInfo mSelectedNetwork;
-    private int mSelectedChannel = 0;
-    private LevelCalculator mLevelCalculator;
-
-    private android.os.Handler handler;
-
-    private NetworkInfoFragment networksFragment;
-    private ChannelInfoFragment mChannelsFragment;
-
-    private SeekBar mThresholdSetter;
-    private TextView mThresholdView;
-    private int mThreshold;
-
-    private SeekBar mSagittaeLenghtSetter;
-    private TextView mSagittaeLengthView;
-
-    private AimView mAimView;
-    private TextView mScanningMessage;
-    FrameLayout mCircleFrameLayout;
-
-    private CameraManager cameraManager;
-
-
-    private final float defaultSagittaeWidth = 0.001f;
-
-    private Thread thread;
-    private UsbSerialPortTi port = null;
-//    private ScreenRecorder mScreenRecorder;
-
-
-    private final int INIT_INTERVAL_MS = 3000;
-    private final int READ_TIMEOUT_MS = 500;
-    private final int READ_BUF_SIZE = ItsPacketCreator.PACK_LEN * 16;
-
-    private final int STATE_INIT = 0;
-    private final int STATE_READING = 1;
-    private final int STATE_EXIT = 255;
-    private int state = STATE_INIT;
-
-    private int curChan = 1;
-    private int setChan = 1;
-
-    private WFPacketCreator wfCreator = new WFPacketCreator();
-    ///
-
-    private long numUpdates = 0;
-    private long lastUpdateTime = 0;
-    private final long TIME_PERIOD = 3 * 1000; //ms
-
-    private OptionsHolder optionsHolder = new OptionsHolder(this);
 
     private PowerManager.WakeLock wakeLock;
 
@@ -326,7 +235,6 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
 
         //progress bar
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        lastUpdateTime = System.currentTimeMillis();
 
         mTextView = (TextView) findViewById(R.id.textView);
         //mTextView2 = (TextView) findViewById(R.id.textView2);
@@ -538,7 +446,6 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
     }
 
     private void updateLevelDiff(double levelDiff) {
-        long deltaTime = System.currentTimeMillis() - lastUpdateTime;
         int progress = (int) Math.floor(100.0 * levelDiff);
         int sigma = (int)progressSigmoid(progress);
 
@@ -594,8 +501,6 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
         // Initialize Tango Service as a normal Android Service, since we call mTango.disconnect()
         // in onPause, this will unbind Tango Service, so every time when onResume gets called, we
         // should create a new Tango object.
-
-        intersector = new SpatialIntersect();
 
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ScreenRecorderService.ACTION_QUERY_STATUS_RESULT);
@@ -749,14 +654,6 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
                     @Override
                     public void preRender() {}
                 });
-
-        // Set the starting position and orientation of the Earth and Moon respect the OpenGL frame.
-        Matrix.setIdentityM(mOpenGLTEarthMoonCenter, 0);
-        Matrix.translateM(mOpenGLTEarthMoonCenter, 0, 0, 0, -1f);
-        Matrix.setIdentityM(mEarthMoonCenterTEarth, 0);
-        Matrix.setIdentityM(mEarthMoonCenterTMoonRotation, 0);
-        Matrix.setIdentityM(mEarthMoonCenterTTranslation, 0);
-        Matrix.translateM(mEarthMoonCenterTTranslation, 0, 0.5f, 0, 0);
 
         mSurfaceView.setRenderer(mRenderer);
     }
@@ -1584,35 +1481,8 @@ public class WiFiAugmentedRealityActivity extends BaseFinderActivity
         startService(intent);
     }
 
-    private void updateRecording(final boolean isRecording, final boolean isPausing) {
-        if (DEBUG) Log.v(TAG, "updateRecording:isRecording=" + isRecording + ",isPausing=" + isPausing);
-        //TODO: update buttons
-    }
-
     @Override
     public void onFragmentInteraction(@NotNull Uri uri) {
 
-    }
-
-
-    private static final class MyBroadcastReceiver extends BroadcastReceiver {
-        private final WeakReference<WiFiAugmentedRealityActivity> mWeakParent;
-        public MyBroadcastReceiver(final WiFiAugmentedRealityActivity parent) {
-            mWeakParent = new WeakReference<WiFiAugmentedRealityActivity>(parent);
-        }
-
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (DEBUG) Log.v(TAG, "onReceive:" + intent);
-            final String action = intent.getAction();
-            if (ScreenRecorderService.ACTION_QUERY_STATUS_RESULT.equals(action)) {
-                final boolean isRecording = intent.getBooleanExtra(ScreenRecorderService.EXTRA_QUERY_RESULT_RECORDING, false);
-                final boolean isPausing = intent.getBooleanExtra(ScreenRecorderService.EXTRA_QUERY_RESULT_PAUSING, false);
-                final WiFiAugmentedRealityActivity parent = mWeakParent.get();
-                if (parent != null) {
-                    parent.updateRecording(isRecording, isPausing);
-                }
-            }
-        }
     }
 }
