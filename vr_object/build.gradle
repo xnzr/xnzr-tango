@@ -47,7 +47,8 @@ android {
         }
 
         noar {
-            versionCode 11
+            versionCode 12
+            versionName "2.1"
         }
     }
 
