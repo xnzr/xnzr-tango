@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Copyright 2016 Google Inc.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <android.opengl.GLSurfaceView
+        android:id="@+id/surfaceview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:visibility="invisible"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1" />
+
+    <com.vr_object.fixed.xnzrw24b.AutoFitTextureView
+        android:id="@+id/camera_texture"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
+
+    <ImageButton
+        android:id="@+id/b_clear_sagittae"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:onClick="clearPelengs"
+        android:scaleType="fitEnd"
+        android:src="@drawable/trash_recyclebin_empty_closed"/>
+
+
+
+    <LinearLayout
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|end"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/b_options"
+            android:onClick="showOptions"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="top|end"
+            android:src="@drawable/gear"
+            android:scaleType="fitEnd" />
+
+        <ImageButton
+            android:id="@+id/b_start_recording"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="visible"
+            android:src="@drawable/icon_record_280x280"
+            android:scaleType="fitEnd"
+            android:onClick="startRecording"/>
+        <ImageButton
+            android:id="@+id/b_stop_recording"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="gone"
+            android:src="@drawable/icon_stop_record_512x512"
+            android:scaleType="fitEnd"
+            android:onClick="stopRecording"/>
+
+        <ImageButton
+            android:onClick="restartScan"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="visible"
+            android:src="@drawable/icon_restart_128"
+            android:scaleType="fitEnd" />
+
+        <ImageButton
+            android:id="@+id/b_create_ble_name"
+            android:onClick="showNameBlePanel"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="gone"
+            android:src="@drawable/icon_save_128"
+            android:scaleType="fitEnd"/>
+
+        <ImageButton
+            android:id="@+id/b_show_map"
+            android:onClick="showMap"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/icons8_ibeacon_96"
+            android:scaleType="fitEnd"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/circle_container"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tw_scanning_message"
+            android:text="@string/message_scanning"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tw_current_frequency"
+            android:text=""
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/options_scroll_view"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:foregroundGravity="center"
+        android:background="@color/options_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TabHost
+                android:id="@+id/options_tab_host"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/options_tab_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TabWidget
+                        android:id="@android:id/tabs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"></TabWidget>
+
+                    <FrameLayout
+                        android:id="@android:id/tabcontent"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:id="@+id/options_peleng_tab"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <LinearLayout
+                                android:id="@+id/threshold_option"
+                                android:layout_margin="@dimen/options_group_margin"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    style="@style/OptionsText"
+                                    android:text="@string/change_threshold_caption"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content" />
+
+                                <SeekBar
+                                    android:id="@+id/threshold_setter"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:max="100"
+                                    android:progress="0"/>
+
+                                <TextView
+                                    style="@style/OptionsText"
+                                    android:id="@+id/threshold_view"
+                                    android:paddingTop="@dimen/options_label_margin"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:text="@string/threshold_text" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_margin="@dimen/options_group_margin"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    style="@style/OptionsText"
+                                    android:id="@+id/sagittae_length_setter_caption"
+                                    android:text="@string/change_sagittae_length_caption"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content" />
+
+                                <SeekBar
+                                    android:id="@+id/sagittae_length_setter"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:max="50"
+                                    android:progress="5"/>
+                                <TextView
+                                    style="@style/OptionsText"
+                                    android:id="@+id/sagittae_length_view"
+                                    android:text="@string/sagittae_length_text"
+                                    android:paddingTop="@dimen/options_label_margin"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content" />
+                                <TextView
+                                    android:text=""
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                                <Switch
+                                    android:id="@+id/b_wifi_ble_switch"
+                                    style="@style/OptionsText"
+                                    android:checked="true"
+                                    android:text=""
+                                    android:textOn="@string/switched_to_wifi_text"
+                                    android:textOff="@string/switched_to_ble_text"
+                                    android:layout_margin="@dimen/options_group_margin"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/options_screen_tab"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <Switch
+                                android:id="@+id/b_hide_clear_sagittae"
+                                style="@style/OptionsText"
+                                android:checked="true"
+                                android:text="@string/sagitta_button_switch"
+                                android:textOn="@string/remove_sagitta_button_text_on"
+                                android:textOff="@string/remove_sagitta_button_text_off"
+                                android:layout_margin="@dimen/options_group_margin"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
+                            <Switch
+                                android:id="@+id/b_on_off_circle"
+                                style="@style/OptionsText"
+                                android:text="@string/circle_switch"
+                                android:textOn="@string/text_on_male"
+                                android:textOff="@string/text_off_male"
+                                android:layout_margin="@dimen/options_group_margin"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
+                            <Switch
+                                android:id="@+id/b_on_off_sound"
+                                style="@style/OptionsText"
+                                android:text="@string/sound_switch"
+                                android:textOn="@string/text_on_male"
+                                android:textOff="@string/text_off_male"
+                                android:layout_margin="@dimen/options_group_margin"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
+                        </LinearLayout>
+
+                    </FrameLayout>
+
+                </LinearLayout>
+
+            </TabHost>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_margin="@dimen/options_group_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/b_save_options"
+                    android:onClick="closeAndSaveOptions"
+                    android:layout_weight="0.3"
+                    android:text="@string/save_options_text"
+                    android:layout_gravity="start|bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:onClick="closeOptions"
+                    android:text="@string/close_options_text"
+                    android:layout_weight="0.3"
+                    android:layout_gravity="end|bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </ScrollView>
+
+    <ScrollView
+        android:id="@+id/create_ble_name_panel"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:foregroundGravity="center"
+        android:background="@color/options_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:text="Enter name for BLE device"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/et_ble_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_margin="@dimen/options_group_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/b_save_ble_name"
+                    android:onClick="saveBleName"
+                    android:layout_weight="0.3"
+                    android:text="@string/save_options_text"
+                    android:layout_gravity="start|bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:onClick="closeNameBlePanel"
+                    android:text="@string/close_options_text"
+                    android:layout_weight="0.3"
+                    android:layout_gravity="end|bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <ScrollView
+        android:id="@+id/options_scroll_view1"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:foregroundGravity="top"
+        android:background="@color/options_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <FrameLayout
+            android:id="@+id/networks_list_content_frame"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:layout_weight="0.1875" />
+
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:max="100"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="100dp"
+                android:textSize="20pt"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+
+        <FrameLayout
+            android:id="@+id/channels_list_content_frame"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_weight="0.1875" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/map_frame"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+</FrameLayout>

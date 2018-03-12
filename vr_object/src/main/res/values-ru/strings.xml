@@ -42,4 +42,5 @@
     <string name="t_save_map_as">Сохранить как...</string>
     <string name="t_move_radio">Подвинуть источник</string>
     <string name="could_not_open_file">Не могу открыть файл</string>
+    <string name="camera_error">Устройство не поддерживает Camera2 API.</string>
 </resources>

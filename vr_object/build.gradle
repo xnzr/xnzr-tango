@@ -47,7 +47,9 @@ android {
         }
 
         noar {
-            versionCode 11
+            versionCode 13
+            versionName "2.1"
+            minSdkVersion 22
         }
     }
 
